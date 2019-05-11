@@ -5,7 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nethereum.Portable" Version="3.3.1" />
+    <PackageReference Include="BouncyCastle" Version="1.8.5" />
+    <PackageReference Include="Nethereum.HdWallet" Version="3.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>
 
 </Project>
