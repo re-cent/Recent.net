@@ -1,7 +1,10 @@
 ﻿using NBitcoin;
 using Nethereum.HdWallet;
+using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Signer;
+using Nethereum.Util;
 using Nethereum.Web3;
 using RecentLib.Models;
 using System;
@@ -160,6 +163,48 @@ namespace RecentLib
             {
                 return new Tuple<ulong?, bool>(null,false);
             }
+        }
+
+        /// <summary>
+        /// Ensure that input address is a valid Recent address.
+        /// </summary>
+        /// <param name="address">Requested address</param>
+        /// <returns>Formats input address, throw Exception when not a valid address</returns>
+        public string ensureValidAddress(string address)
+        {
+            address = address.Replace("ethereum:", "");
+            Nethereum.Util.AddressUtil AddrUtil = new AddressUtil();
+            if (!AddrUtil.IsValidAddressLength(address))
+                throw new Exception("Invalid address");
+
+            return address.EnsureHexPrefix();
+        }
+
+        /// <summary>
+        /// transfer coins from wallet to an address
+        /// </summary>
+        /// <param name="amount">The coins amount</param>
+        /// <param name="destinationAddress">The destination address</param>
+        /// <param name="gasPrice">Setup GasPrice, null get the current netowkr price</param>
+        /// <param name="calcNetFeeOnly">When true calculates the network fee cost, else broadcast transaction to the network</param>
+        /// <returns></returns>
+        public OutgoingTransaction transfer(decimal amount, string destinationAddress, BigInteger? gasPrice, bool calcNetFeeOnly)
+        {
+
+            BigInteger gas = new BigInteger(21000);
+            if (!gasPrice.HasValue)
+            {
+                gasPrice = getGasPrice();
+            }
+
+            decimal networkFee = Web3.Convert.FromWei(gasPrice.Value * gas);
+
+            var txId = "";
+            if (!calcNetFeeOnly)
+            {
+                txId = _web3.TransactionManager.SendTransactionAsync(new TransactionInput("", destinationAddress.EnsureHexPrefix(), _wallet.address.EnsureHexPrefix(), new HexBigInteger(gas), new HexBigInteger(gasPrice.Value), new HexBigInteger(Web3.Convert.ToWei(amount)))).Result;
+            }
+            return new OutgoingTransaction { txId = txId, networkFee = networkFee, gasPrice = gasPrice.Value, gasLimit = gas };
         }
     }
 }
