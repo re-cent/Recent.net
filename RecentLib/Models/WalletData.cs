@@ -17,12 +17,5 @@ namespace RecentLib.Models
 
         [JsonIgnore]
         public string PK { get; set; }
-
-        [NotMapped]
-        public string crypto { get; set; }
-
-        [JsonIgnore]
-        public DateTime LastUpdated { get; set; }
-
     }
 }
