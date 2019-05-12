@@ -125,7 +125,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> getBalance()
         {
-            return weiToRecent(await getBalanceAsBigInteger(_wallet.address));
+            return await getBalance(_wallet.address);
         }
 
         /// <summary>
