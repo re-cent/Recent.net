@@ -10,6 +10,7 @@ using RecentLib.Models;
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using static RecentLib.Constants.RecentProject;
 
 namespace RecentLib
@@ -84,9 +85,9 @@ namespace RecentLib
         /// Get Recent last mined block
         /// </summary>
         /// <returns></returns>
-        public ulong getLastBlock()
+        public async Task<ulong> getLastBlock()
         {
-            return (ulong)_web3.Eth.Blocks.GetBlockNumber.SendRequestAsync().Result.Value;
+            return (ulong)(await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync()).Value;
         }
 
         /// <summary>
@@ -113,36 +114,36 @@ namespace RecentLib
         /// Get Recent Network current gas price
         /// </summary>
         /// <returns></returns>
-        public BigInteger getGasPrice()
+        private async Task<BigInteger> getGasPrice()
         {
-            return _web3.Eth.GasPrice.SendRequestAsync().Result.Value;
+            return (await _web3.Eth.GasPrice.SendRequestAsync()).Value;
         }
 
         /// <summary>
         /// Get current wallet balance
         /// </summary>
         /// <returns></returns>
-        public decimal getBalance()
+        public async Task<decimal> getBalance()
         {
-            return weiToRecent(getBalanceAsBigInteger(_wallet.address));
+            return weiToRecent(await getBalanceAsBigInteger(_wallet.address));
         }
 
         /// <summary>
         /// Get current wallet balance
         /// </summary>
         /// <returns></returns>
-        public BigInteger getBalanceAsBigInteger(string address)
+        private async Task<BigInteger> getBalanceAsBigInteger(string address)
         {
-            return _web3.Eth.GetBalance.SendRequestAsync(address).Result;
+            return await _web3.Eth.GetBalance.SendRequestAsync(address);
         }
 
         /// <summary>
         /// Get address balance
         /// </summary>
         /// <returns></returns>
-        public decimal getBalance(string address)
+        public async Task<decimal> getBalance(string address)
         {
-            return weiToRecent(getBalanceAsBigInteger(address));
+            return weiToRecent(await getBalanceAsBigInteger(address));
         }
 
 
@@ -152,12 +153,12 @@ namespace RecentLib
         /// </summary>
         /// <param name="txId">The transaction hash</param>
         /// <returns>Tuple<Null => Unconfirmed else the number of confirmations, Succeeded or Failed></returns>
-        public Tuple<ulong?,bool> getTransactionConfirmations(string txId)
+        public async Task<Tuple<ulong?,bool>> getTransactionConfirmations(string txId)
         {
-            TransactionReceipt transactionReceipt = _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId).Result;
+            TransactionReceipt transactionReceipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId);
             if (transactionReceipt != null)
             {
-                return new Tuple<ulong?, bool> ((ulong)transactionReceipt.BlockNumber.Value - getLastBlock(), transactionReceipt.Status.Value == 1);
+                return new Tuple<ulong?, bool> ((ulong)transactionReceipt.BlockNumber.Value - await getLastBlock(), transactionReceipt.Status.Value == 1);
             }
             else
             {
@@ -188,13 +189,13 @@ namespace RecentLib
         /// <param name="gasPrice">Setup GasPrice, null get the current netowkr price</param>
         /// <param name="calcNetFeeOnly">When true calculates the network fee cost, else broadcast transaction to the network</param>
         /// <returns></returns>
-        public OutgoingTransaction transfer(decimal amount, string destinationAddress, BigInteger? gasPrice, bool calcNetFeeOnly)
+        public async Task<OutgoingTransaction> transfer(decimal amount, string destinationAddress, BigInteger? gasPrice, bool calcNetFeeOnly)
         {
 
             BigInteger gas = new BigInteger(21000);
             if (!gasPrice.HasValue)
             {
-                gasPrice = getGasPrice();
+                gasPrice = await getGasPrice();
             }
 
             decimal networkFee = Web3.Convert.FromWei(gasPrice.Value * gas);
@@ -202,7 +203,7 @@ namespace RecentLib
             var txId = "";
             if (!calcNetFeeOnly)
             {
-                txId = _web3.TransactionManager.SendTransactionAsync(new TransactionInput("", destinationAddress.EnsureHexPrefix(), _wallet.address.EnsureHexPrefix(), new HexBigInteger(gas), new HexBigInteger(gasPrice.Value), new HexBigInteger(Web3.Convert.ToWei(amount)))).Result;
+                txId = await _web3.TransactionManager.SendTransactionAsync(new TransactionInput("", destinationAddress.EnsureHexPrefix(), _wallet.address.EnsureHexPrefix(), new HexBigInteger(gas), new HexBigInteger(gasPrice.Value), new HexBigInteger(Web3.Convert.ToWei(amount))));
             }
             return new OutgoingTransaction { txId = txId, networkFee = networkFee, gasPrice = gasPrice.Value, gasLimit = gas };
         }
