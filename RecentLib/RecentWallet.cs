@@ -198,12 +198,12 @@ namespace RecentLib
                 gasPrice = await getGasPrice();
             }
 
-            decimal networkFee = Web3.Convert.FromWei(gasPrice.Value * gas);
+            decimal networkFee = weiToRecent(gasPrice.Value * gas);
 
             var txId = "";
             if (!calcNetFeeOnly)
             {
-                txId = await _web3.TransactionManager.SendTransactionAsync(new TransactionInput("", destinationAddress.EnsureHexPrefix(), _wallet.address.EnsureHexPrefix(), new HexBigInteger(gas), new HexBigInteger(gasPrice.Value), new HexBigInteger(Web3.Convert.ToWei(amount))));
+                txId = await _web3.TransactionManager.SendTransactionAsync(new TransactionInput("", destinationAddress.EnsureHexPrefix(), _wallet.address.EnsureHexPrefix(), new HexBigInteger(gas), new HexBigInteger(gasPrice.Value), new HexBigInteger(recentToWei(amount))));
             }
             return new OutgoingTransaction { txId = txId, networkFee = networkFee, gasPrice = gasPrice.Value, gasLimit = gas };
         }
