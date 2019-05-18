@@ -38,4 +38,14 @@ namespace RecentLib.Models.Blockchain
         [Parameter("bool", "disabled")]
         public bool disabled { get; set; }
     }
+
+    [FunctionOutput]
+    public class UserRatingData
+    {
+        [Parameter("uint", "consumerRating")]
+        public uint consumerRating { get; set; }
+
+        [Parameter("uint", "providerRating")]
+        public uint providerRating { get; set; }
+    }
 }
