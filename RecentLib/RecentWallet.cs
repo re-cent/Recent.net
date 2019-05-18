@@ -1,4 +1,5 @@
 ﻿using NBitcoin;
+using Nethereum.Contracts;
 using Nethereum.HdWallet;
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Hex.HexTypes;
@@ -10,16 +11,47 @@ using RecentLib.Models;
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using static RecentLib.Constants.RecentProject;
 
 namespace RecentLib
 {
-    public class RecentWallet
+    public class RecentCore
     {
 
-        private WalletData _wallet { get; set; }
-        private Web3 _web3 { get; set; }
+        public WalletData _wallet { get; set; }
+        public Web3 _web3 { get; set; }
+
+        public async Task<BigInteger> GetGasPrice()
+        {
+            return await _web3.Eth.GasPrice.SendRequestAsync();
+        }
+
+
+        public async Task<OutgoingTransaction> executeBlockchainTransaction(string souceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt,CancellationTokenSource cancellationToken, HexBigInteger value = null)
+        {
+            var gas =await function.EstimateGasAsync(souceAddress, null, value, input);
+            var gasPrice =await GetGasPrice();
+            var txId = "";
+            if (!calcNetFeeOnly)
+            {
+                var txInput = new TransactionInput("", function.ContractAddress, souceAddress, gas, new HexBigInteger(gasPrice), value);
+
+                if (waitReceipt)
+                {
+                    txId = (await function.SendTransactionAndWaitForReceiptAsync(txInput,cancellationToken, input)).TransactionHash;
+                }
+                else
+                {
+                    txId =await function.SendTransactionAsync(txInput, input);
+                }
+                
+                
+            }
+            //var nonce=web3.Eth.TransactionManager.Account.NonceService.GetNextNonceAsync().Result;
+            return new OutgoingTransaction { txId = txId, networkFee = Web3.Convert.FromWei(gas.Value * gasPrice) };
+        }
 
 
         /// <summary>
