@@ -69,6 +69,38 @@ namespace RecentLib
         }
 
         /// <summary>
+        /// Encrypt wallet and return keystore
+        /// </summary>
+        /// <param name="PK">Password</param>
+        /// <returns>Keystore</returns>
+        public string encryptWallet(string password)
+        {
+            EthECKey ethECKey = new EthECKey(_wallet.PK);
+            var service = new Nethereum.KeyStore.KeyStoreService();
+            return service.EncryptAndGenerateDefaultKeyStoreAsJson(
+                        password, ethECKey.GetPrivateKeyAsBytes(), ethECKey.GetPublicAddress());
+        }
+
+        /// <summary>
+        /// Decrypt and setup wallet from Keystore
+        /// </summary>
+        /// <param name="PK">Password</param>
+        /// <returns>The Wallet</returns>
+        public WalletData importFromKeyStore(string keyStore, string password)
+        {
+
+            var service = new Nethereum.KeyStore.KeyStoreService();
+            var key = new Nethereum.Signer.EthECKey(
+                    service.DecryptKeyStoreFromJson(password, keyStore),
+                    true);
+
+            var address = EthECKey.GetPublicAddress(key.GetPrivateKey());
+            _wallet = new WalletData { address = address, PK = key.GetPrivateKey() };
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), NodeUrl);
+            return _wallet;
+        }
+
+        /// <summary>
         /// Create a Recent wallet given a Private Key
         /// </summary>
         /// <param name="PK">The Private key</param>
@@ -221,7 +253,7 @@ namespace RecentLib
         /// <param name="gasPrice">Setup GasPrice, null get the current netowkr price</param>
         /// <param name="calcNetFeeOnly">When true calculates the network fee cost, else broadcast transaction to the network</param>
         /// <returns></returns>
-        public async Task<OutgoingTransaction> transfer(decimal amount, string destinationAddress, BigInteger? gasPrice, bool calcNetFeeOnly)
+        public async Task<OutgoingTransaction> transfer(decimal amount, string destinationAddress, BigInteger? gasPrice, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
 
             BigInteger gas = new BigInteger(21000);
@@ -235,7 +267,18 @@ namespace RecentLib
             var txId = "";
             if (!calcNetFeeOnly)
             {
-                txId = await _web3.TransactionManager.SendTransactionAsync(new TransactionInput("", destinationAddress.EnsureHexPrefix(), _wallet.address.EnsureHexPrefix(), new HexBigInteger(gas), new HexBigInteger(gasPrice.Value), new HexBigInteger(recentToWei(amount))));
+                
+
+                if (waitReceipt)
+                {
+                    txId = (await _web3.TransactionManager.SendTransactionAndWaitForReceiptAsync(new TransactionInput("", destinationAddress.EnsureHexPrefix(), _wallet.address.EnsureHexPrefix(), new HexBigInteger(gas), new HexBigInteger(gasPrice.Value), new HexBigInteger(recentToWei(amount))), cancellationToken)).TransactionHash;
+                }
+                else
+                {
+                    txId = await _web3.TransactionManager.SendTransactionAsync(new TransactionInput("", destinationAddress.EnsureHexPrefix(), _wallet.address.EnsureHexPrefix(), new HexBigInteger(gas), new HexBigInteger(gasPrice.Value), new HexBigInteger(recentToWei(amount))));
+                }
+
+
             }
             return new OutgoingTransaction { txId = txId, networkFee = networkFee, gasPrice = gasPrice.Value, gasLimit = gas };
         }
