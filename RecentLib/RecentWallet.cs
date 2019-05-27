@@ -20,8 +20,8 @@ namespace RecentLib
     public class RecentCore
     {
 
-        public WalletData _wallet { get; set; }
-        public Web3 _web3 { get; set; }
+        internal WalletData _wallet { get; set; }
+        internal Web3 _web3 { get; set; }
 
         public async Task<BigInteger> GetGasPrice()
         {
@@ -66,6 +66,15 @@ namespace RecentLib
             _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), NodeUrl);
             return _wallet;
 
+        }
+
+        /// <summary>
+        /// Get wallet
+        /// </summary>
+        /// <returns>Wallet data</returns>
+        public WalletData getWallet()
+        {
+            return _wallet;
         }
 
         /// <summary>
