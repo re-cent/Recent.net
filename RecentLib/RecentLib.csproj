@@ -1,10 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>Nessos Information Technologies S.A.</Company>
+    <Description>Shared library for blockchain development</Description>
+    <Copyright>Nessos Information Technologies S.A. 2019</Copyright>
+    <PackageProjectUrl>https://github.com/nessos/Recent.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nessos/Recent.net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageTags>blockchain; shared</PackageTags>
+    <Product>Recent</Product>
+    <PackageId>Recent.Shared</PackageId>
+    <Authors>Giannis Ntovas; Ioannis Zarifis</Authors>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19270-01">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Nethereum.HdWallet" Version="3.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
