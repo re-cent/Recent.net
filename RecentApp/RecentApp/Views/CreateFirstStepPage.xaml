@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="RecentApp.Views.CreateFirstStepPage"
+             Title="{Binding Title}">
+    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="StartAndExpand" Padding="20">
+        <Label FontSize="18" Text="Pass-phrase"></Label>
+        <Frame BorderColor="Aqua" CornerRadius="2">
+            <Label Text="{Binding Phrase}" TextColor="Black" FontSize="20" 
+                WidthRequest="250" HeightRequest="150" LineBreakMode="WordWrap" MaxLines="5"></Label>
+        </Frame>
+        
+        <Label Text="Παρακαλώ γράψτε και κρατήστε τις λέξεις που εμφανίζονται, θα χρειαστούν στο επόμενο βήμα, όπως και σε ανάκτηση του wallet σας στο μέλλον."></Label>
+        <Button Text="Next" Command="{Binding NextStepCommand}"></Button>
+    </StackLayout>
+</ContentPage>

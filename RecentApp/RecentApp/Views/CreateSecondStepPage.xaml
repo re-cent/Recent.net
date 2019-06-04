@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="RecentApp.Views.CreateSecondStepPage">
+    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+        <Label Text="Type again the seed phrase to continue"></Label>
+        <Frame BorderColor="Aqua" CornerRadius="2" WidthRequest="200" HeightRequest="150" Margin="30">
+            <Label Text="{Binding InputPhrase}" TextColor="Black" FontSize="20" 
+                    LineBreakMode="WordWrap" MaxLines="5"></Label>
+        </Frame>
+        <Grid WidthRequest="230" HeightRequest="200" RowSpacing="2" ColumnSpacing="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center" 
+                   Text="{Binding WordsArr[0]}" 
+                   Grid.Column="0" Grid.Row="0">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[0]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[1]}" 
+                   Grid.Column="1" Grid.Row="0">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[1]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[2]}"
+                   Grid.Column="2" Grid.Row="0">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[2]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[3]}"
+                   Grid.Column="0" Grid.Row="1">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[3]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[4]}"
+                   Grid.Column="1" Grid.Row="1">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[4]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[5]}"
+                   Grid.Column="2" Grid.Row="1">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[5]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[6]}"
+                   Grid.Column="0" Grid.Row="2">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[6]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[7]}"
+                   Grid.Column="1" Grid.Row="2">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[7]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[8]}"
+                   Grid.Column="2" Grid.Row="2">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[8]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[9]}"
+                   Grid.Column="0" Grid.Row="3">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[9]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[10]}"
+                   Grid.Column="1" Grid.Row="3">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[10]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                   Text="{Binding WordsArr[11]}"
+                   Grid.Column="2" Grid.Row="3">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddWordCommand}"
+                                          CommandParameter="{Binding WordsArr[11]}"/>
+                </Label.GestureRecognizers>
+            </Label>
+        </Grid>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Margin="10,30,10,0"
+                     VerticalOptions="EndAndExpand" HeightRequest="50" WidthRequest="250">
+            <Button HorizontalOptions="StartAndExpand" Text="Cancel" Command="{Binding CancelCommand}"></Button>
+            <Button HorizontalOptions="EndAndExpand" Text="Submit" Command="{Binding CheckCommand}"></Button>
+        </StackLayout>
+        
+    </StackLayout>
+</ContentPage>
