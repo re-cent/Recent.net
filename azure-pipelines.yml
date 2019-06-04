@@ -1,11 +1,9 @@
 trigger:
+  batch: true
   branches:
     include:
     - master
     - develop
-  paths:
-    include:
-    -  RecentLib/*
 
 pr:
   autoCancel: true
