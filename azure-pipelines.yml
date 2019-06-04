@@ -38,16 +38,6 @@ steps:
     projects: 'RecentLib/*.csproj'
     arguments: '--no-restore'
 
-
-# - task: DotNetCoreCLI@2
-#   inputs:
-#     command: 'pack'
-#     searchPatternPack: 'RecentLib/*.csproj'
-#     versioningScheme: 'byEnvVar'
-#     versionEnvVar: 'Version'
-#     verbosityPack: 'Normal'
-#     arguments: --include-symbols --include-source
-
 - task: DotNetCoreCLI@2
   name: dotnetPack
   displayName: "Packing nugets..."
