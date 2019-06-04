@@ -16,9 +16,12 @@ variables:
     value: '$(VersionMajor).$(VersionMinor).$(VersionPatch)'
 
 steps:
-- task: CmdLine@2
+- task: PowerShell@2
   inputs:
-    script: 'if "$(Build.SourceBranch	)" == "develop" (echo ##vso[task.setvariable variable=Version]$(Version)-dev)'
+    targetType: 'inline'
+    script: 'if($(Build.SourceBranch) -eq "develop"){
+        Write-Host "##vso[task.setvariable variable=Version]$(Version)-dev
+      }'
 
 - task: DotNetCoreCLI@2
   name: dotnetRestore
@@ -37,14 +40,23 @@ steps:
     arguments: '--no-restore'
 
 
+# - task: DotNetCoreCLI@2
+#   inputs:
+#     command: 'pack'
+#     searchPatternPack: 'RecentLib/*.csproj'
+#     versioningScheme: 'byEnvVar'
+#     versionEnvVar: 'Version'
+#     verbosityPack: 'Normal'
+#     arguments: --include-symbols --include-source
+
 - task: DotNetCoreCLI@2
+  name: dotnetPack
+  displayName: "Packing nugets..."
   inputs:
-    command: 'pack'
-    searchPatternPack: 'RecentLib/*.csproj'
-    versioningScheme: 'byEnvVar'
-    versionEnvVar: 'Version'
-    verbosityPack: 'Normal'
-    arguments: --include-symbols --include-source
+    command: 'custom'
+    projects: 'RecentLib/*.csproj'
+    custom: 'pack'
+    arguments: '--output $(Build.ArtifactStagingDirectory) /p:Configuration=$(Release) /p:PackageVersion=$(Version)  --verbosity Normal --include-symbols'
 
 - task: PublishBuildArtifacts@1
   name: publishToFeed
@@ -57,6 +69,6 @@ steps:
   displayName: "Pushing nugets to feed..."
   inputs:
     command: 'push'
-    packagesToPush: '$(build.artifactStagingDirectory)/*.nupkg'
+    packagesToPush: '$(build.artifactStagingDirectory)/*nupkg'
     verbosityPack: 'Minimal'
     feedPublish: 'NessosShared'
