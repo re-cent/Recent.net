@@ -24,20 +24,18 @@ steps:
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: '$Version = ''$(VersionMajor).$(VersionMinor).$(VersionPatch)''
+    script: '$Version = ""$(VersionMajor).$(VersionMinor).$(VersionPatch)"
 
-      $PreRelease = ''''
+      echo "Current branch is $Env:Build.SourceBranchName $(Build.SourceBranchName)"
+
+      $PreRelease = ""
 
       if($Env:Build.SourceBranchName -eq "develop"){
-        $PreRelease="dev"
+        $PreRelease="-dev"
       }
 
       if($Env:Build.SourceBranchName -eq "merge"){
-        $PreRelease="beta"
-      }
-
-      if($Env:Build.SourceBranchName -eq "merge"){
-        $PreRelease = $Env:Version+"-beta"
+        $PreRelease="-beta"
       }
 
       echo "##vso[task.setvariable variable=Version]$Version-$PreRelease"'
