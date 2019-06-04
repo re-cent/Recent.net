@@ -7,6 +7,13 @@ trigger:
     include:
     -  RecentLib/*
 
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - master
+      - develop
+
 pool:
   name: Hosted Windows 2019 with VS2019
 
