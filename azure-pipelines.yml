@@ -20,7 +20,8 @@ steps:
   inputs:
     targetType: 'inline'
     script: 'if($(Build.SourceBranch) -eq "develop"){
-        Write-Host "##vso[task.setvariable variable=Version]$(Version)-dev
+        $PreRelease=($(Version)+"dev")
+        Write-Host "##vso[task.setvariable variable=Version]$(PreRelease)
       }'
 
 - task: DotNetCoreCLI@2
