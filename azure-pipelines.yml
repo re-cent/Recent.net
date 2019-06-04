@@ -25,16 +25,21 @@ steps:
   inputs:
     targetType: 'inline'
     script: '$Version = ''$(VersionMajor).$(VersionMinor).$(VersionPatch)''
+
       $PreRelease = ''''
+
       if($Env:Build.SourceBranchName -eq "develop"){
         $PreRelease="dev"
       }
+
       if($Env:Build.SourceBranchName -eq "merge"){
         $PreRelease="beta"
       }
+
       if($Env:Build.SourceBranchName -eq "merge"){
         $PreRelease = $Env:Version+"-beta"
       }
+
       echo "##vso[task.setvariable variable=Version]$Version-$PreRelease"'
 
 - task: DotNetCoreCLI@2
