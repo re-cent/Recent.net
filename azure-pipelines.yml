@@ -21,22 +21,18 @@ variables:
     value: '$(VersionMajor).$(VersionMinor).$(VersionPatch)'
 
 steps:
-- bash: echo $(Build.SourceBranchName)
-
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
     script: '$Version = "$(VersionMajor).$(VersionMinor).$(VersionPatch)"
 
-      echo "Current branch is $Env:Build.SourceBranchName $(Build.SourceBranchName)"
-
       $PreRelease = ""
 
-      if($Env:Build.SourceBranchName -eq "develop"){
+      if($(Build.SourceBranchName) -eq "develop"){
         $PreRelease="-dev"
       }
 
-      if($Env:Build.SourceBranchName -eq "merge"){
+      if($(Build.SourceBranchName) -eq "merge"){
         $PreRelease="-beta"
       }
 
