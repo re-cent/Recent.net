@@ -21,8 +21,6 @@ variables:
     value: '$(VersionMajor).$(VersionMinor).$(VersionPatch)'
 
 steps:
-- bash: echo $(Build.SourceBranchName)
-
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
