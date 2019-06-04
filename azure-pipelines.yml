@@ -44,6 +44,7 @@ steps:
     versioningScheme: 'byEnvVar'
     versionEnvVar: 'Version'
     verbosityPack: 'Normal'
+    arguments: --include-symbols --include-source
 
 - task: PublishBuildArtifacts@1
   name: publishToFeed
