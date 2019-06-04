@@ -17,13 +17,10 @@ variables:
 
 steps:
 - task: PowerShell@2
+  name: versioningScheme
+  displayName: "Apply version manipulation"
   inputs:
-    targetType: 'inline'
-    script: 'if($(Build.SourceBranch) -eq "develop"){
-        $PreRelease=($(Version)+"dev")
-
-        Write-Host "##vso[task.setvariable variable=Version]$(PreRelease)
-      }'
+    filePath: 'version.ps1'
 
 - task: DotNetCoreCLI@2
   name: dotnetRestore
