@@ -21,6 +21,7 @@ steps:
     targetType: 'inline'
     script: 'if($(Build.SourceBranch) -eq "develop"){
         $PreRelease=($(Version)+"dev")
+
         Write-Host "##vso[task.setvariable variable=Version]$(PreRelease)
       }'
 
