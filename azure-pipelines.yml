@@ -6,7 +6,7 @@ trigger:
     - develop
   paths:
     include:
-      RecentLib/*
+    -  RecentLib/*
 
 pool:
   name: Hosted Windows 2019 with VS2019
