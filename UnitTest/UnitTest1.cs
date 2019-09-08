@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RecentLib;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace UnitTest
@@ -28,6 +29,9 @@ namespace UnitTest
             //var r2 = lib.getRelayer("https://www.google.com1").Result;
 
             var r3 = lib.getRelayers().Result;
+
+            var cid = lib.uploadBinary(File.ReadAllBytes(@"C:\Users\jzari_000\Pictures\img001.jpg")).Result;
+            File.WriteAllBytes(@"C:\Users\jzari_000\Pictures\" + cid + ".jpg", lib.downloadBinary(cid).Result);
 
         }
     }
