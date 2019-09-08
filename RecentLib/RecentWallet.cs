@@ -23,16 +23,12 @@ namespace RecentLib
         internal WalletData _wallet { get; set; }
         internal Web3 _web3 { get; set; }
 
-        public async Task<BigInteger> GetGasPrice()
-        {
-            return await _web3.Eth.GasPrice.SendRequestAsync();
-        }
 
 
         protected async Task<OutgoingTransaction> executeBlockchainTransaction(string souceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt,CancellationTokenSource cancellationToken, HexBigInteger value = null)
         {
             var gas =await function.EstimateGasAsync(souceAddress, null, value, input);
-            var gasPrice =await GetGasPrice();
+            var gasPrice =await getGasPrice();
             var txId = "";
             if (!calcNetFeeOnly)
             {
