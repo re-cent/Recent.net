@@ -45,10 +45,10 @@ namespace RecentLib
         }
 
         /// <summary>
-        /// Downloads a binary file to Ipfs from ipfs
+        /// Get a URL for uploaded binary
         /// </summary>
         /// <param name="cid">The Ipfs CID</param>
-        /// <returns>The byte array</returns>
+        /// <returns>The Url</returns>
         public string getIpfsCIDUrl(string cid)
         {
             return $"{ipfsGatewayEndpoint}{cid}";
