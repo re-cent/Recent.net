@@ -36,24 +36,11 @@ namespace RecentLib
         /// <returns>Relayer</returns>
         public async Task<Relayer> getRelayer(string domain)
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("relayers");
-            var result = await function.CallDeserializingToObjectAsync<RelayerData>(getRelayerIdFromDomain(domain));
-            return new Relayer
-            {
-                domain = result.domain,
-                fee = result.fee / 1000,
-                isActive = result.isActive,
-                name = result.name,
-                owner = result.owner,
-                totalPoints = result.totalPoints,
-                totalVotes = result.totalVotes
-
-            };
+            return await getRelayer(getRelayerIdFromDomain(domain));  
         }
 
         /// <summary>
-        /// Returns Relayer data
+        /// Returns Relayer
         /// </summary>
         /// <param name="relayerId">The relayerId</param>
         /// <returns>Relayer</returns>
