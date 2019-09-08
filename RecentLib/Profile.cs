@@ -15,6 +15,11 @@ namespace RecentLib
     {
 
 
+        /// <summary>
+        /// Uploads a binary file to Ipfs
+        /// </summary>
+        /// <param name="binary">The byte array</param>
+        /// <returns>The Ipfs CID</returns>
         public async Task<string> uploadBinary(byte[] binary)
         {
             var ipfs = new IpfsClient(ipfsClientEndpoint);
@@ -23,6 +28,11 @@ namespace RecentLib
             return ret.Id.Hash.ToString();
         }
 
+        /// <summary>
+        /// Downloads a binary file to Ipfs from ipfs
+        /// </summary>
+        /// <param name="cid">The Ipfs CID</param>
+        /// <returns>The byte array</returns>
         public async Task<byte[]> downloadBinary(string cid)
         {
             var ipfs = new IpfsClient(ipfsClientEndpoint);
@@ -34,15 +44,17 @@ namespace RecentLib
             }
         }
 
-        public async Task<string> readContent()
+        /// <summary>
+        /// Downloads a binary file to Ipfs from ipfs
+        /// </summary>
+        /// <param name="cid">The Ipfs CID</param>
+        /// <returns>The byte array</returns>
+        public string getIpfsCIDUrl(string cid)
         {
-            var ipfs = new IpfsClient("https://ipfs.infura.io:5001");
-
-            //const string filename = "QmXarR6rgkQ2fDSHjSY5nM2kuCXKYGViky5nohtwgF65Ec/about";
-            const string filename = "Qmaisz6NMhDB51cCvNWa1GMS7LU1pAxdF4Ld6Ft9kZEP2a";
-
-            return await ipfs.FileSystem.ReadAllTextAsync(filename);
+            return $"{ipfsGatewayEndpoint}{cid}";
         }
+
+
 
         /// <summary>
         /// Returns user profile data

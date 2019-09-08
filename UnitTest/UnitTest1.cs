@@ -31,6 +31,7 @@ namespace UnitTest
             var r3 = lib.getRelayers().Result;
 
             var cid = lib.uploadBinary(File.ReadAllBytes(@"C:\Users\jzari_000\Pictures\img001.jpg")).Result;
+            var ipfsUrl = lib.getIpfsCIDUrl(cid);
             File.WriteAllBytes(@"C:\Users\jzari_000\Pictures\" + cid + ".jpg", lib.downloadBinary(cid).Result);
 
         }
