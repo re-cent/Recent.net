@@ -19,7 +19,7 @@ namespace RecentLib {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ABIs {
@@ -57,6 +57,43 @@ namespace RecentLib {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [
+        ///    {
+        ///      &quot;constant&quot;: true,
+        ///      &quot;inputs&quot;: [
+        ///        {
+        ///          &quot;name&quot;: &quot;&quot;,
+        ///          &quot;type&quot;: &quot;address&quot;
+        ///        },
+        ///        {
+        ///          &quot;name&quot;: &quot;&quot;,
+        ///          &quot;type&quot;: &quot;bytes32&quot;
+        ///        }
+        ///      ],
+        ///      &quot;name&quot;: &quot;userVotesForRelayer&quot;,
+        ///      &quot;outputs&quot;: [
+        ///        {
+        ///          &quot;name&quot;: &quot;&quot;,
+        ///          &quot;type&quot;: &quot;uint256&quot;
+        ///        }
+        ///      ],
+        ///      &quot;payable&quot;: false,
+        ///      &quot;stateMutability&quot;: &quot;view&quot;,
+        ///      &quot;type&quot;: &quot;function&quot;
+        ///    },
+        ///    {
+        ///      &quot;constant&quot;: true,
+        ///      &quot;inputs&quot;: [
+        ///        {
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PaymentChannelsABI {
+            get {
+                return ResourceManager.GetString("PaymentChannelsABI", resourceCulture);
             }
         }
         

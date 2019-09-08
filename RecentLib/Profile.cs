@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace RecentLib
 {
-    public class Profile : RecentCore
+    public partial class RecentCore
     {
         /// <summary>
         /// Returns user profile data
@@ -53,14 +53,7 @@ namespace RecentLib
             };
         }
 
-        public async Task<OutgoingTransaction> executeProfileMethod(string method, object[] input, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken )
-        {
 
-            var contract = _web3.Eth.GetContract(UserProfileABI, ProfileContract);
-            var function = contract.GetFunction(method);
-
-            return await executeBlockchainTransaction(_wallet.address, input, calcNetFeeOnly, function, waitReceipt, cancellationToken);
-        }
 
 
         /// <summary>
@@ -91,6 +84,15 @@ namespace RecentLib
         public async Task<OutgoingTransaction> rateAsConsumer(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             return await executeProfileMethod("rateConsumer", new object[] { address, (uint)(rating * 100) }, calcNetFeeOnly, waitReceipt, cancellationToken);
+        }
+
+        protected async Task<OutgoingTransaction> executeProfileMethod(string method, object[] input, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        {
+
+            var contract = _web3.Eth.GetContract(UserProfileABI, ProfileContract);
+            var function = contract.GetFunction(method);
+
+            return await executeBlockchainTransaction(_wallet.address, input, calcNetFeeOnly, function, waitReceipt, cancellationToken);
         }
 
     }

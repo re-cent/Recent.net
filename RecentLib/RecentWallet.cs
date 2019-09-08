@@ -17,7 +17,7 @@ using static RecentLib.Constants.RecentProject;
 
 namespace RecentLib
 {
-    public class RecentCore
+    public partial class RecentCore
     {
 
         internal WalletData _wallet { get; set; }
@@ -29,7 +29,7 @@ namespace RecentLib
         }
 
 
-        public async Task<OutgoingTransaction> executeBlockchainTransaction(string souceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt,CancellationTokenSource cancellationToken, HexBigInteger value = null)
+        protected async Task<OutgoingTransaction> executeBlockchainTransaction(string souceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt,CancellationTokenSource cancellationToken, HexBigInteger value = null)
         {
             var gas =await function.EstimateGasAsync(souceAddress, null, value, input);
             var gasPrice =await GetGasPrice();
