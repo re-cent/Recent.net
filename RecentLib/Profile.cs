@@ -71,17 +71,17 @@ namespace RecentLib
         /// </summary>
         /// <param name="userProfile">User profile</param>
         /// <returns></returns>
-        public async Task<OutgoingTransaction> rateAsProvider(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> rateProvider(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             return await executeProfileMethod("rateProvider", new object[] { _wallet.address, (uint)(rating * 100) }, calcNetFeeOnly, waitReceipt, cancellationToken);
         }
 
         /// <summary>
-        /// Rate user as Content Consuler
+        /// Rate user as Content Consumer
         /// </summary>
         /// <param name="userProfile">User profile</param>
         /// <returns></returns>
-        public async Task<OutgoingTransaction> rateAsConsumer(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> rateConsumer(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             return await executeProfileMethod("rateConsumer", new object[] { address, (uint)(rating * 100) }, calcNetFeeOnly, waitReceipt, cancellationToken);
         }
