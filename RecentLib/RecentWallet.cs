@@ -13,12 +13,21 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using static RecentLib.Constants.RecentProject;
 
 namespace RecentLib
 {
     public partial class RecentCore
     {
+	    private readonly string _nodeUrl;
+
+		public RecentCore() 
+			: this(Constants.RecentProject.NodeUrl)
+		{ }
+
+	    public RecentCore(string nodeUrl)
+	    {
+		    _nodeUrl = nodeUrl;
+	    }
 
         internal WalletData _wallet { get; set; }
         internal Web3 _web3 { get; set; }
@@ -59,7 +68,7 @@ namespace RecentLib
 
             var ecKey = EthECKey.GenerateKey();
             _wallet= new WalletData { address = ecKey.GetPublicAddress(), PK = ecKey.GetPrivateKey() };
-            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), NodeUrl);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), _nodeUrl);
             return _wallet;
 
         }
@@ -101,7 +110,7 @@ namespace RecentLib
 
             var address = EthECKey.GetPublicAddress(key.GetPrivateKey());
             _wallet = new WalletData { address = address, PK = key.GetPrivateKey() };
-            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), NodeUrl);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), _nodeUrl);
             return _wallet;
         }
 
@@ -115,7 +124,7 @@ namespace RecentLib
 
             var address = EthECKey.GetPublicAddress(PK);
             _wallet=new WalletData { address = address, PK = PK};
-            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), NodeUrl);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), _nodeUrl);
             return _wallet;
 
         }
@@ -129,7 +138,7 @@ namespace RecentLib
             Wallet wallet = new Wallet(Wordlist.English, WordCount.Twelve);
             var account = wallet.GetAccount(0);
             _wallet = new WalletData { address = account.Address, PK = account.PrivateKey };
-            _web3 = new Web3(account, NodeUrl);
+            _web3 = new Web3(account, _nodeUrl);
             return string.Join(" ", wallet.Words);
         }
 
@@ -145,7 +154,7 @@ namespace RecentLib
             Wallet wallet = new Wallet(seedPhrase, null);
             var account = wallet.GetAccount(0);
             _wallet = new WalletData { address = account.Address, PK = account.PrivateKey };
-            _web3 = new Web3(account, NodeUrl);
+            _web3 = new Web3(account, _nodeUrl);
             return new WalletData { address = account.Address, PK = account.PrivateKey};
         }
 
