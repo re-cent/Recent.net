@@ -35,5 +35,17 @@ namespace UnitTest
             File.WriteAllBytes(@"C:\Users\jzari_000\Pictures\" + cid + ".jpg", lib.downloadBinary(cid).Result);
 
         }
+
+
+        [TestMethod]
+        public void Balance()
+        {
+            var lib = new RecentCore();
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var coins = lib.getBalance().Result;
+            var coinsAsWei = lib.recentToWei(coins);
+
+
+        }
     }
 }

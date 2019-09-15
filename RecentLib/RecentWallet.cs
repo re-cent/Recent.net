@@ -175,7 +175,7 @@ namespace RecentLib
         /// <returns></returns>
         public BigInteger recentToWei(decimal value)
         {
-            return Web3.Convert.ToWei(value, Nethereum.Util.UnitConversion.EthUnit.Wei);
+            return Web3.Convert.ToWei(value, Nethereum.Util.UnitConversion.EthUnit.Ether);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace RecentLib
         /// <returns></returns>
         public decimal weiToRecent(BigInteger wei)
         {
-            return Web3.Convert.FromWei(wei, Nethereum.Util.UnitConversion.EthUnit.Wei);
+            return Web3.Convert.FromWei(wei, Nethereum.Util.UnitConversion.EthUnit.Ether);
         }
 
         /// <summary>
