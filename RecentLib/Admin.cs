@@ -13,27 +13,36 @@ namespace RecentLib
     public partial class RecentCore
     {
         /// <summary>
-        /// Add Relayer
+        /// Register new Relayer
         /// </summary>
-        /// <param name="address">Relayer</param>
-        /// <returns></returns>
-        public async Task<OutgoingTransaction> addRelayer(string domain, string name, bool isActive, decimal fee, bool calcNetFeeOnly, CancellationTokenSource cancellationToken)
+        /// <param name="domain">The Relayer domain name or Ip</param>
+        /// <param name="name">The Relayer name</param>
+        /// <param name="isActive">Active or not</param>
+        /// <param name="fee">The commision fee percent</param>
+        /// <returns>The tx</returns>
+        public async Task<OutgoingTransaction> addRelayer(string domain, string name, bool isActive, decimal fee, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("addRelayer");
-            
-            return await executeBlockchainTransaction(_wallet.address, new object[] { domain, name, isActive, (int)(fee * 1000) }, calcNetFeeOnly, function, true, cancellationToken);
-            ////var encoder = new Nethereum.ABI.Encoders.BytesTypeEncoder();
-            ////var relayerId = Nethereum.Util.Sha3Keccack.Current.CalculateHash(encoder.EncodePacked(domain));
-            //var stringEncoder = new Nethereum.ABI.Encoders.StringTypeEncoder();
-            //var relayerId = Nethereum.Util.Sha3Keccack.Current.CalculateHash(stringEncoder.EncodePacked(domain));
-            //return await getRelayerData(relayerId);
-
-
+            if (fee > 100)
+                throw new Exception("Fee should be lower than 100");
+            return await executePaymentChannelsMethod("addRelayer", new object[] { domain, name, isActive, (uint)(fee * 10) }, calcNetFeeOnly, waitReceipt, cancellationToken);
 
         }
 
-        
+        /// <summary>
+        /// Update Relayer
+        /// </summary>
+        /// <param name="domain">The Relayer domain name or Ip</param>
+        /// <param name="name">The Relayer name</param>
+        /// <param name="isActive">Active or not</param>
+        /// <param name="fee">The commision fee percent</param>
+        /// <returns>The tx</returns>
+        public async Task<OutgoingTransaction> updateRelayer(string domain, string name, bool isActive, decimal fee, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        {
+            if (fee > 100)
+                throw new Exception("Fee should be lower than 100");
+            return await executePaymentChannelsMethod("updateRelayer", new object[] { getRelayerIdFromDomain(domain), name, (uint)(fee * 10), isActive }, calcNetFeeOnly, waitReceipt, cancellationToken);
+
+        }
 
 
     }

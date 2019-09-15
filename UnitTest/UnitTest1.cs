@@ -8,10 +8,12 @@ namespace UnitTest
     [TestClass]
     public class UnitTest1
     {
+        const string NodeUrl = "http://192.168.1.248:8545";
+
         [TestMethod]
         public void TestMethod1()
         {
-            var lib = new RecentCore();
+            var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
             //Parallel.For(0, 100, i =>
             //{
@@ -40,12 +42,53 @@ namespace UnitTest
         [TestMethod]
         public void Balance()
         {
-            var lib = new RecentCore();
+            var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
             var coins = lib.getBalance().Result;
             var coinsAsWei = lib.recentToWei(coins);
 
 
         }
+
+        [TestMethod]
+        public void AddRelayer()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var tx = lib.addRelayer("https://www.abc.com/", "Test", true, 12.1m,false, true, null).Result;
+
+
+        }
+
+        [TestMethod]
+        public void updateRelayer()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var tx = lib.updateRelayer("https://www.abc.com/", "Test 1", true, 12.8m, false, true, null).Result;
+            var relayer = lib.getRelayer("https://www.abc.com/", true).Result;
+            Assert.AreEqual(relayer.fee, 12.8m);
+
+        }
+
+        [TestMethod]
+        public void depositToRelayer()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var tx = lib.depositToRelayer("https://www.abc.com/",0.001m,1, false, true, null).Result;
+
+        }
+
+        [TestMethod]
+        public void voteRelayer()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var tx = lib.voteRelayer("https://www.abc.com/",2.8d, false, true, null).Result;
+
+        }
+
+
     }
 }

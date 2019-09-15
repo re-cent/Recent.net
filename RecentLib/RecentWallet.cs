@@ -55,7 +55,7 @@ namespace RecentLib
                 
             }
             //var nonce=web3.Eth.TransactionManager.Account.NonceService.GetNextNonceAsync().Result;
-            return new OutgoingTransaction { txId = txId, networkFee = Web3.Convert.FromWei(gas.Value * gasPrice) };
+            return new OutgoingTransaction { txId = txId, networkFee = Web3.Convert.FromWei(gas.Value * gasPrice), gasLimit = gas, gasPrice = gasPrice };
         }
 
 
@@ -166,6 +166,19 @@ namespace RecentLib
         public async Task<ulong> getLastBlock()
         {
             return (ulong)(await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync()).Value;
+        }
+
+        /// <summary>
+        /// Convert a decimal value to Wei
+        /// </summary>
+        /// <param name="value">The value in decimal</param>
+        /// <returns></returns>
+        public HexBigInteger recentToWei(decimal? value)
+        {
+            if (value.HasValue)
+                return new HexBigInteger(Web3.Convert.ToWei(value.Value, Nethereum.Util.UnitConversion.EthUnit.Ether));
+            else
+                return null;
         }
 
         /// <summary>
