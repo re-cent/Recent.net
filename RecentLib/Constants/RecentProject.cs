@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace RecentLib.Constants
@@ -14,6 +15,7 @@ namespace RecentLib.Constants
         public static string UserProfileABI = ABIs.ProfileABI;
         public static string PaymentChannelsABI = ABIs.PaymentChannelsABI;
 
+        public static double MinAcceptedGasPrice = 1000000000;
         
 
         public static string ipfsClientEndpoint = "https://ipfs.infura.io:5001";

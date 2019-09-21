@@ -13,6 +13,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using static RecentLib.Constants.RecentProject;
 
 namespace RecentLib
 {
@@ -207,7 +208,10 @@ namespace RecentLib
         /// <returns></returns>
         private async Task<BigInteger> getGasPrice()
         {
-            return (await _web3.Eth.GasPrice.SendRequestAsync()).Value;
+
+            return new BigInteger(MinAcceptedGasPrice);
+            //var retrievedGasPrice = (await _web3.Eth.GasPrice.SendRequestAsync()).Value;
+            //return Math.Max(retrievedGasPrice, new BigInteger(MinAcceptedGasPrice));
         }
 
         /// <summary>
