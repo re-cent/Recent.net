@@ -22,7 +22,7 @@ namespace RecentLib
         /// <returns>The Ipfs CID</returns>
         public async Task<string> uploadBinary(byte[] binary)
         {
-            var ipfs = new IpfsClient(ipfsClientEndpoint);
+            var ipfs = new IpfsClient(IpfsClientEndpoint);
 
             var ret = await ipfs.FileSystem.AddAsync(new MemoryStream(binary));
             return ret.Id.Hash.ToString();
@@ -35,7 +35,7 @@ namespace RecentLib
         /// <returns>The byte array</returns>
         public async Task<byte[]> downloadBinary(string cid)
         {
-            var ipfs = new IpfsClient(ipfsClientEndpoint);
+            var ipfs = new IpfsClient(IpfsClientEndpoint);
             var stream = await ipfs.FileSystem.ReadFileAsync(cid);
             using (MemoryStream ms = new MemoryStream())
             {
@@ -51,7 +51,7 @@ namespace RecentLib
         /// <returns>The Url</returns>
         public string getIpfsCIDUrl(string cid)
         {
-            return $"{ipfsGatewayEndpoint}{cid}";
+            return $"{IpfsGatewayEndpoint}{cid}";
         }
 
 

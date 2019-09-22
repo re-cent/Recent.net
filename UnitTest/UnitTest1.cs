@@ -10,6 +10,8 @@ namespace UnitTest
     public class UnitTest1
     {
         const string NodeUrl = "http://ec2-52-59-205-93.eu-central-1.compute.amazonaws.com:8545";
+        const string Node2Url = "http://127.0.0.1:8545";
+
 
         [TestMethod]
         public void TestMethod1()
@@ -88,7 +90,7 @@ namespace UnitTest
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
 
-            var lib2 = new RecentCore("http://127.0.0.1:8545");
+            var lib2 = new RecentCore(Node2Url);
             var wallet2 = lib2.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
 
             try
@@ -122,7 +124,7 @@ namespace UnitTest
 
 
         [TestMethod]
-        public void stressDepostisToRelayer()
+        public void stressDepositsToRelayer()
         {
 
             var alala= stressDepostisToRelayerParallel().Result;
@@ -137,6 +139,22 @@ namespace UnitTest
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
             var tx = lib.voteRelayer("https://www.abc.com/",2.8d, false, true, null).Result;
+
+        }
+
+        [TestMethod]
+        public void gasPrice()
+        {
+
+            var lib1 = new RecentCore(NodeUrl);
+            var lib2 = new RecentCore(Node2Url);
+
+            var gasPrice1 = lib1.getGasPriceAsDecimal().Result;
+            var gasPrice2 = lib2.getGasPriceAsDecimal().Result;
+
+            var gasPrice = lib1.getGasPriceForTransaction();
+            gasPrice = lib1.setGasPriceForTransaction(1.5m);
+            updateRelayer();
 
         }
 

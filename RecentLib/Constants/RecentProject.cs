@@ -15,14 +15,14 @@ namespace RecentLib.Constants
         public static string UserProfileABI = ABIs.ProfileABI;
         public static string PaymentChannelsABI = ABIs.PaymentChannelsABI;
 
-        public static double MinAcceptedGasPrice = 1000000000;
+        public static decimal GasPrice = 1;
         
 
-        public static string ipfsClientEndpoint = "https://ipfs.infura.io:5001";
+        public static string IpfsClientEndpoint = "https://ipfs.infura.io:5001";
 
 
         //public static string ipfsEndpoint = "https://cloudflare-ipfs.com/ipfs/";
-        public static string ipfsGatewayEndpoint = "https://ipfs.infura.io/ipfs/";
+        public static string IpfsGatewayEndpoint = "https://ipfs.infura.io/ipfs/";
         //public static string ipfsEndpoint = "https://ipfs.io/ipfs/";
     }
 }

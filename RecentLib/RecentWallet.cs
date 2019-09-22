@@ -13,6 +13,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using static Nethereum.Util.UnitConversion;
 using static RecentLib.Constants.RecentProject;
 
 namespace RecentLib
@@ -28,7 +29,9 @@ namespace RecentLib
 	    public RecentCore(string nodeUrl)
 	    {
 		    _nodeUrl = nodeUrl;
-	    }
+            _web3 = new Web3(_nodeUrl);
+
+        }
 
         internal WalletData _wallet { get; set; }
         internal Web3 _web3 { get; set; }
@@ -38,7 +41,7 @@ namespace RecentLib
         protected async Task<OutgoingTransaction> executeBlockchainTransaction(string souceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt,CancellationTokenSource cancellationToken, HexBigInteger value = null)
         {
             var gas =await function.EstimateGasAsync(souceAddress, null, value, input);
-            var gasPrice =await getGasPrice();
+            var gasPrice =getGasPrice();
             var txId = "";
             if (!calcNetFeeOnly)
             {
@@ -203,15 +206,41 @@ namespace RecentLib
         }
 
         /// <summary>
+        /// Get gas price to be used on transactions in GWei
+        /// </summary>
+        /// <returns></returns>
+        private BigInteger getGasPrice()
+        {
+            return Web3.Convert.ToWei(GasPrice,EthUnit.Gwei);
+        }
+
+        /// <summary>
+        /// Get gas price to be used on transactions in GWei
+        /// </summary>
+        /// <returns></returns>
+        public decimal getGasPriceForTransaction()
+        {
+            return GasPrice;
+        }
+
+        /// <summary>
+        /// Set gas price to be used on transactions
+        /// </summary>
+        /// <param name="newGasPrice">New price in GWei</param>
+        /// <returns></returns>
+        public decimal setGasPriceForTransaction(decimal newGasPrice)
+        {
+            GasPrice = newGasPrice;
+            return getGasPriceForTransaction();
+        }
+
+        /// <summary>
         /// Get Recent Network current gas price
         /// </summary>
         /// <returns></returns>
-        private async Task<BigInteger> getGasPrice()
+        public async Task<decimal> getGasPriceAsDecimal()
         {
-
-            return new BigInteger(MinAcceptedGasPrice);
-            //var retrievedGasPrice = (await _web3.Eth.GasPrice.SendRequestAsync()).Value;
-            //return Math.Max(retrievedGasPrice, new BigInteger(MinAcceptedGasPrice));
+            return Web3.Convert.FromWei((await _web3.Eth.GasPrice.SendRequestAsync()).Value, EthUnit.Gwei);
         }
 
         /// <summary>
@@ -290,7 +319,7 @@ namespace RecentLib
             BigInteger gas = new BigInteger(21000);
             if (!gasPrice.HasValue)
             {
-                gasPrice = await getGasPrice();
+                gasPrice = getGasPrice();
             }
 
             decimal networkFee = weiToRecent(gasPrice.Value * gas);
