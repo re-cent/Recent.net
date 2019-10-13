@@ -9,8 +9,8 @@ namespace UnitTest
     [TestClass]
     public class UnitTest1
     {
-        const string NodeUrl = "http://ec2-52-59-205-93.eu-central-1.compute.amazonaws.com:8545";
-        const string Node2Url = "http://127.0.0.1:8545";
+        const string Node2Url = "http://ec2-52-59-205-93.eu-central-1.compute.amazonaws.com:8545";
+        const string NodeUrl = "http://192.168.1.248:8545";
 
 
         [TestMethod]
@@ -95,18 +95,18 @@ namespace UnitTest
 
             try
             {
-                const int TaskCount = 5000;
+                const int TaskCount = 1000;
                 var tasks = new Task[TaskCount];
                 for (int i = 0; i < TaskCount; i++)
                 {
-                    tasks[i] = lib.depositToRelayer("https://www.abc.com/", 0.000000000000001m, 1, false, true, null);
+                    tasks[i] = lib.depositToRelayer("https://www.abc.com/", 0.000000000000001m, 1, false, false, null);
                 }
 
-                const int TaskCount2 = 5000;
+                const int TaskCount2 = 1000;
                 var tasks2 = new Task[TaskCount2];
                 for (int i = 0; i < TaskCount2; i++)
                 {
-                    tasks2[i] = lib2.depositToRelayer("https://www.abc.com/", 0.000000000000001m, 1, false, true, null);
+                    tasks2[i] = lib2.depositToRelayer("https://www.abc.com/", 0.000000000000001m, 1, false, false, null);
                 }
 
                 await Task.WhenAll(tasks);
