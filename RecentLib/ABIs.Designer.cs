@@ -62,34 +62,35 @@ namespace RecentLib {
         
         /// <summary>
         ///   Looks up a localized string similar to [
-        ///    {
-        ///      &quot;constant&quot;: true,
-        ///      &quot;inputs&quot;: [
-        ///        {
-        ///          &quot;name&quot;: &quot;&quot;,
-        ///          &quot;type&quot;: &quot;address&quot;
-        ///        },
-        ///        {
-        ///          &quot;name&quot;: &quot;&quot;,
-        ///          &quot;type&quot;: &quot;bytes32&quot;
-        ///        }
-        ///      ],
-        ///      &quot;name&quot;: &quot;userVotesForRelayer&quot;,
-        ///      &quot;outputs&quot;: [
-        ///        {
-        ///          &quot;name&quot;: &quot;&quot;,
-        ///          &quot;type&quot;: &quot;uint256&quot;
-        ///        }
-        ///      ],
-        ///      &quot;payable&quot;: false,
-        ///      &quot;stateMutability&quot;: &quot;view&quot;,
-        ///      &quot;type&quot;: &quot;function&quot;
-        ///    },
-        ///    {
-        ///      &quot;constant&quot;: true,
-        ///      &quot;inputs&quot;: [
-        ///        {
-        ///   [rest of string was truncated]&quot;;.
+        ///	{
+        ///		&quot;inputs&quot;: [],
+        ///		&quot;payable&quot;: false,
+        ///		&quot;stateMutability&quot;: &quot;nonpayable&quot;,
+        ///		&quot;type&quot;: &quot;constructor&quot;
+        ///	},
+        ///	{
+        ///		&quot;anonymous&quot;: false,
+        ///		&quot;inputs&quot;: [
+        ///			{
+        ///				&quot;indexed&quot;: false,
+        ///				&quot;internalType&quot;: &quot;bytes32&quot;,
+        ///				&quot;name&quot;: &quot;id&quot;,
+        ///				&quot;type&quot;: &quot;bytes32&quot;
+        ///			},
+        ///			{
+        ///				&quot;indexed&quot;: true,
+        ///				&quot;internalType&quot;: &quot;address&quot;,
+        ///				&quot;name&quot;: &quot;sender&quot;,
+        ///				&quot;type&quot;: &quot;address&quot;
+        ///			},
+        ///			{
+        ///				&quot;indexed&quot;: false,
+        ///				&quot;internalType&quot;: &quot;uint256&quot;,
+        ///				&quot;name&quot;: &quot;amount&quot;,
+        ///				&quot;type&quot;: &quot;uint256&quot;
+        ///			}
+        ///		],
+        ///		&quot;name&quot;: &quot;Channe [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string PaymentChannelsABI {
             get {

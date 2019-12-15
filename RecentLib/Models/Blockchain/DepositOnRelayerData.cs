@@ -9,8 +9,8 @@ namespace RecentLib.Models.Blockchain
     [FunctionOutput]
     public class DepositOnRelayerData
     {
-        [Parameter("uint", "lockUntil")]
-        public uint lockUntil { get; set; }
+        [Parameter("uint", "lockUntilBlock")]
+        public uint lockUntilBlock { get; set; }
 
         [Parameter("uint256", "balance")]
         public BigInteger balance { get; set; }

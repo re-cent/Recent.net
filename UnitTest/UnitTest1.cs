@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RecentLib;
+using RecentLib.Models;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -9,8 +10,8 @@ namespace UnitTest
     [TestClass]
     public class UnitTest1
     {
-        const string Node2Url = "http://ec2-52-59-205-93.eu-central-1.compute.amazonaws.com:8545";
-        const string NodeUrl = "http://192.168.1.248:8545";
+        const string Node2Url = "http://ec2-3-124-182-37.eu-central-1.compute.amazonaws.com:8545";
+        const string NodeUrl = "http://ec2-3-124-182-37.eu-central-1.compute.amazonaws.com:8545";
 
 
         [TestMethod]
@@ -33,7 +34,7 @@ namespace UnitTest
 
             //var r2 = lib.getRelayer("https://www.google.com1").Result;
 
-            var r3 = lib.getRelayers().Result;
+            var r3 = lib.getRelayers(null).Result;
 
             var cid = lib.uploadBinary(File.ReadAllBytes(@"C:\Users\jzari_000\Pictures\img001.jpg")).Result;
             var ipfsUrl = lib.getIpfsCIDUrl(cid);
@@ -54,11 +55,26 @@ namespace UnitTest
         }
 
         [TestMethod]
+        public void TestBlockchain()
+        {
+            var lib = new RecentCore(Node2Url);
+            var wallet = lib.importWalletFromPK("E5ADE4B50BA041A9C77DBA91401BEA949393F2C24433B0338702E7AE06443089");
+            var balance = lib.getBalance().Result;
+            var txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
+
+            
+             wallet = lib.importWalletFromPK("B68811986F995A45C66CF30D7C9A015268A1BB2E4697D6DBB23D7B96FC3607B0");
+             balance = lib.getBalance().Result;
+             txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
+        }
+
+        [TestMethod]
         public void AddRelayer()
         {
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var tx = lib.addRelayer("https://www.abc.com/", "Test", true, 12.1m,false, true, null).Result;
+            var requiredAmount = lib.getFundRequiredForRelayer(10, 10, 1).Result;
+            var tx = lib.addRelayer("https://www.abc.com/", "Test", 12.1m, 10 , 10, 1, 1000, requiredAmount, false, true, null).Result;
 
 
         }
@@ -68,7 +84,7 @@ namespace UnitTest
         {
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var tx = lib.updateRelayer("https://www.abc.com/", "Test 1", true, 12.8m, false, true, null).Result;
+            var tx = lib.updateRelayer("https://www.abc.com/", "Test 1", 12.8m, 1000 , false, true, null).Result;
             var relayer = lib.getRelayer("https://www.abc.com/", true).Result;
             Assert.AreEqual(relayer.fee, 12.8m);
 
@@ -83,6 +99,16 @@ namespace UnitTest
 
         }
 
+        [TestMethod]
+        public void testSignature()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var tx = new SignedOffchainTransaction { amount = lib.recentToWei(1.2m), beneficiary = wallet.address, fee = (uint)( 12.1m * 10m), nonce =Guid.NewGuid().ToString("N"), relayerId = wallet.address };
+            var signedTx = lib.signOffchainPayment(tx).Result;
+            var signeTest = lib.checkFinalizeOffchainRelayerSignature(signedTx).Result;
+
+        }
 
         private async Task<bool> stressDepostisToRelayerParallel()
         {
@@ -133,14 +159,7 @@ namespace UnitTest
 
         }
 
-        [TestMethod]
-        public void voteRelayer()
-        {
-            var lib = new RecentCore(NodeUrl);
-            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var tx = lib.voteRelayer("https://www.abc.com/",2.8d, false, true, null).Result;
 
-        }
 
         [TestMethod]
         public void gasPrice()

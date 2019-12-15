@@ -8,7 +8,7 @@ namespace RecentLib.Models.Blockchain
     [FunctionOutput]
     public class RelayerData
     {
-        [Parameter("bytes32", "name")]
+        [Parameter("string", "name")]
         public string name { get; set; }
 
         [Parameter("address", "owner")]
@@ -17,17 +17,23 @@ namespace RecentLib.Models.Blockchain
         [Parameter("string", "domain")]
         public string domain { get; set; }
 
-        [Parameter("bool", "isActive")]
-        public bool isActive { get; set; }
+        [Parameter("uint", "maxUsers")]
+        public uint maxUsers { get; set; }
+
+        [Parameter("uint", "maxCoins")]
+        public uint maxCoins { get; set; }
+
+        [Parameter("uint", "maxTxThroughput")]
+        public uint maxTxThroughput { get; set; }
+
+        [Parameter("uint", "offchainTxDelay")]
+        public uint offchainTxDelay { get; set; }
+
+        [Parameter("uint", "epoch")]
+        public uint epoch { get; set; }
 
         [Parameter("uint", "fee")]
         public uint fee { get; set; }
-
-        [Parameter("uint", "totalPoints")]
-        public uint totalPoints { get; set; }
-
-        [Parameter("uint", "totalVotes")]
-        public uint totalVotes { get; set; }
 
     }
 }
