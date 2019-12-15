@@ -1,4 +1,5 @@
-﻿using Nethereum.ABI.Encoders;
+﻿using Nethereum.ABI;
+using Nethereum.ABI.Encoders;
 using Nethereum.Signer;
 using Nethereum.Util;
 using RecentLib.Models;
@@ -130,23 +131,32 @@ namespace RecentLib
         public async Task<SignedOffchainTransaction> signOffchainPayment(SignedOffchainTransaction offchainTransaction)
         {
             var signer = new MessageSigner();
-            var encoder = new Nethereum.ABI.ABIEncode();
-            var payloadEncoded = encoder.GetABIEncodedPacked(new object[] { offchainTransaction.relayerId, offchainTransaction.beneficiary, offchainTransaction.nonce, offchainTransaction.amount, offchainTransaction.fee });
-            var proof = Nethereum.Util.Sha3Keccack.Current.CalculateHash(payloadEncoded);
-            var payloadEncodedWithPrefix = Nethereum.Util.Sha3Keccack.Current.CalculateHash(encoder.GetABIEncodedPacked(new object[] { prefix, proof }));
-            var fromcontract = await getFinalizeOffchainRelayerSignature(offchainTransaction);
+            var encoder = new ABIEncode();
 
-            var byte32decoder = new Nethereum.ABI.Decoders.Bytes32TypeDecoder();
-            var our = byte32decoder.Decode(payloadEncodedWithPrefix,typeof(string));
-            var their = byte32decoder.Decode(fromcontract, typeof(string));
+            ABIValue[] ABIValues = new ABIValue[]{
+            new ABIValue("address", offchainTransaction.relayerId),
+            new ABIValue("address", offchainTransaction.beneficiary),
+            new ABIValue("bytes32", offchainTransaction.nonce),
+            new ABIValue("uint256", offchainTransaction.amount),
+            new ABIValue("uint", offchainTransaction.fee)
+            };
 
-            //offchainTransaction.h = fromcontract; This works
-            offchainTransaction.h = payloadEncodedWithPrefix;
+            var payloadEncoded = encoder.GetABIEncodedPacked(ABIValues);
+            var proof = Sha3Keccack.Current.CalculateHash(payloadEncoded);
+            //ABIValue[] ABIValuesForPrefix = new ABIValue[]{
+            //new ABIValue("bytes",System.Text.ASCIIEncoding.ASCII.GetBytes(prefix)),
+            //new ABIValue("bytes32", proof)
+            //};
+
+            //var payloadEncodedWithPrefix = Sha3Keccack.Current.CalculateHash(encoder.GetABIEncoded(ABIValuesForPrefix));
+
+            //var fromcontract = await getFinalizeOffchainRelayerSignature(offchainTransaction);
+
+
+            //offchainTransaction.h = fromcontract; //This works
+            offchainTransaction.h = proof;
 
             var signedTx = signer.Sign(offchainTransaction.h, _wallet.PK);
-
-            //var byte32encoder = new Nethereum.ABI.Encoders.Bytes32TypeEncoder();
-            //offchainTransaction.h = byte32encoder.Encode(signedTx);
 
 
             var signature = EthereumMessageSigner.ExtractEcdsaSignature(signedTx);
@@ -162,7 +172,9 @@ namespace RecentLib
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
             var function = contract.GetFunction("checkFinalizeOffchainRelayerSignature");
             string signer = await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.v, signedOffchainTransaction.r, signedOffchainTransaction.s, signedOffchainTransaction.relayerId, signedOffchainTransaction.nonce, signedOffchainTransaction.fee, signedOffchainTransaction.beneficiary, signedOffchainTransaction.amount);
-            return AddressUtil.Current.ConvertToChecksumAddress(signer) == AddressUtil.Current.ConvertToChecksumAddress(signedOffchainTransaction.signer);
+            var addressEqualityComparer = new AddressEqualityComparer();
+            return addressEqualityComparer.Equals(signer, signedOffchainTransaction.signer);
+            //return AddressUtil.Current.ConvertToChecksumAddress(signer) == AddressUtil.Current.ConvertToChecksumAddress(signedOffchainTransaction.signer);
         }
 
         public async Task<byte[]> getFinalizeOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)

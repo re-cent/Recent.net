@@ -10,14 +10,14 @@ namespace RecentLib.Constants
         public static string BlockhainName = "Recent";
         public static string NodeUrl = "http://127.0.0.1:8545";
         public static string ProfileContract = "0x2A263c3264f5fba02202E4F7023a97Fb53fd0B19";
-        public static string PaymentChannelsContract = "0x7e1E7eAd027161026CF37dF024a5c258Bf08D7a1";
+        public static string PaymentChannelsContract = "0xD282cD7dF173D3d33b3C7ddE79E0eAf28306cbBD";
 
         public static string UserProfileABI = ABIs.ProfileABI;
         public static string PaymentChannelsABI = ABIs.PaymentChannelsABI;
 
         public static decimal GasPrice = 1;
 
-        public static string prefix = "\x19Re-CentT Signed Message:\n32";
+        //public static string prefix = "\x19Re-CentT Signed Message:\n32";
         
 
         public static string IpfsClientEndpoint = "https://ipfs.infura.io:5001";
