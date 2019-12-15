@@ -80,6 +80,17 @@ namespace UnitTest
         }
 
         [TestMethod]
+        public void GetRelayer()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var relayer = lib.getRelayer(wallet.address).Result;
+            //var tx = lib.addRelayer("https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
+
+
+        }
+
+        [TestMethod]
         public void updateRelayer()
         {
             var lib = new RecentCore(NodeUrl);
@@ -95,7 +106,7 @@ namespace UnitTest
         {
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var tx = lib.depositToRelayer("https://www.abc.com/",0.001m,1, false, true, null).Result;
+            var tx = lib.depositToRelayer(wallet.address, 0.000000000000000001m, 100000, false, true, null).Result;
 
         }
 
@@ -106,8 +117,9 @@ namespace UnitTest
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
             var tx = new SignedOffchainTransaction { amount = lib.recentToWei(1.2m), beneficiary = wallet.address, fee = (uint)( 12.1m * 10m), nonce =Guid.NewGuid().ToString("N"), relayerId = wallet.address };
             var signedTx = lib.signOffchainPayment(tx).Result;
-            var signeTest = lib.checkFinalizeOffchainRelayerSignature(signedTx).Result;
-
+            var signerTest = lib.checkOffchainSignature(signedTx).Result;
+            var signedFromRelayerTx = lib.relayerSignOffchainPayment(signedTx).Result;
+            var relayerTest = lib.checkOffchainRelayerSignature(signedTx).Result;
         }
 
         private async Task<bool> stressDepostisToRelayerParallel()

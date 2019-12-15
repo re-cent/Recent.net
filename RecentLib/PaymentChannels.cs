@@ -49,7 +49,7 @@ namespace RecentLib
                 lockUntilBlock = lockUntilBlock,
                 userBalance = balance,
                 epoch = result.epoch,
-                maxCoins = result.maxCoins,
+                maxCoins = weiToRecent(result.maxCoins),
                 maxTxThroughput = result.maxTxThroughput,
                 maxUsers = result.maxUsers,
                 offchainTxDelay = result.offchainTxDelay
@@ -128,13 +128,52 @@ namespace RecentLib
             return await withdrawFunds(owner, amount, calcNetFeeOnly, waitReceipt, cancellationToken);
         }
 
+       
+
+
+        public async Task<SignedOffchainTransaction> relayerSignOffchainPayment(SignedOffchainTransaction offchainTransaction)
+        {
+
+            var validSignature = await checkOffchainSignature(offchainTransaction);
+            if (!validSignature)
+            {
+                throw new Exception("Invalid signature");
+            }
+
+            var currentBlock = await getLastBlock();
+            var relayer = await getRelayer(_wallet.address);
+            offchainTransaction.txUntilBlock = currentBlock + relayer.offchainTxDelay;
+
+            var signer = new MessageSigner();
+            var encoder = new ABIEncode();
+
+            ABIValue[] ABIValues = new ABIValue[]{
+            new ABIValue("bytes32", offchainTransaction.h),
+            new ABIValue("uint", offchainTransaction.txUntilBlock)
+            };
+
+            var payloadEncoded = encoder.GetABIEncodedPacked(ABIValues);
+            var proof = Sha3Keccack.Current.CalculateHash(payloadEncoded);
+
+            offchainTransaction.rh = proof;
+
+            var signedTx = signer.Sign(offchainTransaction.rh, _wallet.PK);
+
+
+            var signature = MessageSigner.ExtractEcdsaSignature(signedTx);
+            offchainTransaction.rv = signature.V.FirstOrDefault();
+            offchainTransaction.rr = signature.R;
+            offchainTransaction.rs = signature.S;
+            offchainTransaction.relayerId = _wallet.address;
+            return offchainTransaction;
+        }
+
         public async Task<SignedOffchainTransaction> signOffchainPayment(SignedOffchainTransaction offchainTransaction)
         {
             var signer = new MessageSigner();
             var encoder = new ABIEncode();
 
             ABIValue[] ABIValues = new ABIValue[]{
-            new ABIValue("address", offchainTransaction.relayerId),
             new ABIValue("address", offchainTransaction.beneficiary),
             new ABIValue("bytes32", offchainTransaction.nonce),
             new ABIValue("uint256", offchainTransaction.amount),
@@ -143,23 +182,13 @@ namespace RecentLib
 
             var payloadEncoded = encoder.GetABIEncodedPacked(ABIValues);
             var proof = Sha3Keccack.Current.CalculateHash(payloadEncoded);
-            //ABIValue[] ABIValuesForPrefix = new ABIValue[]{
-            //new ABIValue("bytes",System.Text.ASCIIEncoding.ASCII.GetBytes(prefix)),
-            //new ABIValue("bytes32", proof)
-            //};
 
-            //var payloadEncodedWithPrefix = Sha3Keccack.Current.CalculateHash(encoder.GetABIEncoded(ABIValuesForPrefix));
-
-            //var fromcontract = await getFinalizeOffchainRelayerSignature(offchainTransaction);
-
-
-            //offchainTransaction.h = fromcontract; //This works
             offchainTransaction.h = proof;
 
             var signedTx = signer.Sign(offchainTransaction.h, _wallet.PK);
 
 
-            var signature = EthereumMessageSigner.ExtractEcdsaSignature(signedTx);
+            var signature = MessageSigner.ExtractEcdsaSignature(signedTx);
             offchainTransaction.v = signature.V.FirstOrDefault();
             offchainTransaction.r = signature.R;
             offchainTransaction.s = signature.S;
@@ -167,14 +196,25 @@ namespace RecentLib
             return offchainTransaction;
         }
 
-        public async Task<bool> checkFinalizeOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)
+
+        public async Task<bool> checkOffchainSignature(SignedOffchainTransaction signedOffchainTransaction)
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("checkFinalizeOffchainRelayerSignature");
-            string signer = await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.v, signedOffchainTransaction.r, signedOffchainTransaction.s, signedOffchainTransaction.relayerId, signedOffchainTransaction.nonce, signedOffchainTransaction.fee, signedOffchainTransaction.beneficiary, signedOffchainTransaction.amount);
+            var function = contract.GetFunction("checkOffchainSignature");
+            string signer = await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.v, signedOffchainTransaction.r, signedOffchainTransaction.s, signedOffchainTransaction.nonce, signedOffchainTransaction.fee, signedOffchainTransaction.beneficiary, signedOffchainTransaction.amount);
             var addressEqualityComparer = new AddressEqualityComparer();
             return addressEqualityComparer.Equals(signer, signedOffchainTransaction.signer);
             //return AddressUtil.Current.ConvertToChecksumAddress(signer) == AddressUtil.Current.ConvertToChecksumAddress(signedOffchainTransaction.signer);
+        }
+
+
+        public async Task<bool> checkOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)
+        {
+            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            var function = contract.GetFunction("checkOffchainRelayerSignature");
+            string signer = await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.rh, signedOffchainTransaction.rv, signedOffchainTransaction.rr, signedOffchainTransaction.rs, signedOffchainTransaction.txUntilBlock);
+            var addressEqualityComparer = new AddressEqualityComparer();
+            return addressEqualityComparer.Equals(signer, signedOffchainTransaction.relayerId);
         }
 
         public async Task<byte[]> getFinalizeOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)

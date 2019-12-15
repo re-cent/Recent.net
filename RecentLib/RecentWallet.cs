@@ -167,9 +167,9 @@ namespace RecentLib
         /// Get Recent last mined block
         /// </summary>
         /// <returns></returns>
-        public async Task<ulong> getLastBlock()
+        public async Task<uint> getLastBlock()
         {
-            return (ulong)(await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync()).Value;
+            return (uint)(await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync()).Value;
         }
 
         /// <summary>

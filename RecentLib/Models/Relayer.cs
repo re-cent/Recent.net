@@ -20,7 +20,7 @@ namespace RecentLib.Models
 
         public uint maxUsers { get; set; }
 
-        public uint maxCoins { get; set; }
+        public decimal maxCoins { get; set; }
 
         public uint maxTxThroughput { get; set; }
 

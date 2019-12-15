@@ -13,11 +13,14 @@ namespace RecentLib
         /// Register new Relayer(Only allowed on epoch 1)
         /// </summary>
         /// <returns>The tx</returns>
-        public async Task<OutgoingTransaction> addRelayer(string domain, string name, decimal fee, uint maxUsers, uint maxCoins, uint maxTxThroughput, uint offchainTxDelay, decimal penaltyFunds, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> addRelayer(string domain, string name, decimal fee, uint maxUsers, decimal maxCoins, uint maxTxThroughput, uint offchainTxDelay, decimal penaltyFunds, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             if (fee > 100)
                 throw new Exception("Fee should be lower than 100");
-            return await executePaymentChannelsMethod("addRelayer", new object[] { domain, name, (uint)(fee * 10), maxUsers, maxCoins, maxTxThroughput, offchainTxDelay }, calcNetFeeOnly, waitReceipt, cancellationToken, penaltyFunds);
+            var requiredAmount = await getFundRequiredForRelayer(maxUsers, maxCoins, maxTxThroughput);
+            if (requiredAmount != penaltyFunds)
+                throw new Exception($"Required amount is {requiredAmount}");
+            return await executePaymentChannelsMethod("addRelayer", new object[] { domain, name, (uint)(fee * 10), maxUsers, recentToWei(maxCoins), maxTxThroughput, offchainTxDelay }, calcNetFeeOnly, waitReceipt, cancellationToken, penaltyFunds);
 
         }
 
@@ -29,14 +32,14 @@ namespace RecentLib
         /// <param name="isActive">Active or not</param>
         /// <param name="fee">The commision fee percent</param>
         /// <returns>The tx</returns>
-        public async Task<OutgoingTransaction> requestRelayerLicense(string domain, string name, decimal fee, uint maxUsers, uint maxCoins, uint maxTxThroughput, uint offchainTxDelay, decimal penaltyFunds, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> requestRelayerLicense(string domain, string name, decimal fee, uint maxUsers, decimal maxCoins, uint maxTxThroughput, uint offchainTxDelay, decimal penaltyFunds, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             if (fee > 100)
                 throw new Exception("Fee should be lower than 100");
-            var requiredAmount = await getFundRequiredForRelayer(maxUsers, maxCoins, maxTxThroughput);
+            var requiredAmount = await getFundRequiredForRelayer(maxUsers,  maxCoins, maxTxThroughput);
             if (requiredAmount!= penaltyFunds)
                 throw new Exception($"Required amount is {requiredAmount}");
-            return await executePaymentChannelsMethod("requestRelayerLicense", new object[] { domain, name, (uint)(fee * 10), maxUsers, maxCoins, maxTxThroughput, offchainTxDelay }, calcNetFeeOnly, waitReceipt, cancellationToken, penaltyFunds);
+            return await executePaymentChannelsMethod("requestRelayerLicense", new object[] { domain, name, (uint)(fee * 10), maxUsers, recentToWei(maxCoins), maxTxThroughput, offchainTxDelay }, calcNetFeeOnly, waitReceipt, cancellationToken, penaltyFunds);
 
         }
 
@@ -76,12 +79,12 @@ namespace RecentLib
         }
 
 
-        public async Task<decimal> getFundRequiredForRelayer(uint maxUsers, uint maxCoins, uint maxTxThroughput)
+        public async Task<decimal> getFundRequiredForRelayer(uint maxUsers, decimal maxCoins, uint maxTxThroughput)
         {
 
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
             var function = contract.GetFunction("getFundRequiredForRelayer");
-            var fundRequired = await function.CallAsync<BigInteger>(maxUsers, maxCoins, maxTxThroughput);
+            var fundRequired = await function.CallAsync<BigInteger>(maxUsers, recentToWei(maxCoins), maxTxThroughput);
 
 
             return weiToRecent(fundRequired);
