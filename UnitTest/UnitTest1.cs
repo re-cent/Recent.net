@@ -68,24 +68,60 @@ namespace UnitTest
              txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
         }
 
-        [TestMethod]
-        public void AddRelayer()
-        {
-            var lib = new RecentCore(NodeUrl);
-            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var requiredAmount = lib.getFundRequiredForRelayer(10, 10, 1).Result;
-            var tx = lib.addRelayer("https://www.abc.com/", "Test", 12.1m, 10 , 10, 1, 1000, requiredAmount, false, true, null).Result;
 
 
-        }
 
         [TestMethod]
-        public void GetRelayer()
+        public void Flow()
         {
-            var lib = new RecentCore(NodeUrl);
-            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var relayer = lib.getRelayer(wallet.address).Result;
-            //var tx = lib.addRelayer("https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
+            var relayerLib = new RecentCore(NodeUrl);
+            var relayerWallet = relayerLib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var currentEpoch = relayerLib.getCurrentEpoch().Result;
+            var relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
+            var requiredAmount = relayerLib.getFundRequiredForRelayer(10, 10, 1).Result;
+            if (relayer.maxUsers ==0)
+            {
+               
+                var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
+                relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
+            }
+            else
+            {
+                currentEpoch += 1;
+                var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
+                relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
+            }
+
+
+
+
+            var userLib = new RecentCore(NodeUrl);
+            var userWallet = userLib.importWalletFromPK("E5ADE4B50BA041A9C77DBA91401BEA949393F2C24433B0338702E7AE06443089");
+            var userBalance = userLib.getBalance().Result;
+            if (userBalance==0)
+            {
+                var tx = userLib.transfer(0.01m, userWallet.address, null, false, true, null).Result;
+                Assert.AreEqual(userLib.getBalance().Result, 0.01m);
+            }
+            var currentBlock = userLib.getLastBlock().Result;
+
+            var userBalanceOnRelayer = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
+            if (userBalanceOnRelayer.lockUntilBlock < currentBlock && userBalanceOnRelayer.balance > 0m)
+            {
+                var tx = userLib.withdrawFundsFromRelayer(relayer.owner, userBalanceOnRelayer.balance, false, true, null).Result;
+                userBalanceOnRelayer = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
+                Assert.AreEqual(userBalanceOnRelayer.balance, 0m);
+            }
+            if (userBalanceOnRelayer.balance==0m)
+            {
+                var tx = userLib.depositToRelayer(relayer.owner, 0.01m, currentBlock + 10, false, true, null).Result;
+                userBalanceOnRelayer = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
+                Assert.AreEqual(userBalanceOnRelayer.balance, 0.01m);
+            }
+            
+            
+
+            
 
 
         }
@@ -95,8 +131,10 @@ namespace UnitTest
         {
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var tx = lib.updateRelayer("https://www.abc.com/", "Test 1", 12.8m, 1000 , false, true, null).Result;
-            var relayer = lib.getRelayer("https://www.abc.com/", true).Result;
+            var currentEpoch = lib.getCurrentEpoch().Result;
+            var relayer = lib.getRelayer(currentEpoch, wallet.address).Result;
+            var tx = lib.updateRelayer(currentEpoch, "https://www.abc.com/", "Test 1", 12.8m, 1000 , false, true, null).Result;
+            relayer = lib.getRelayer(currentEpoch, wallet.address).Result;
             Assert.AreEqual(relayer.fee, 12.8m);
 
         }

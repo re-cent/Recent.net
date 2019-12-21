@@ -9,7 +9,6 @@ using Nethereum.Util;
 using Nethereum.Web3;
 using RecentLib.Models;
 using System;
-using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,15 +19,15 @@ namespace RecentLib
 {
     public partial class RecentCore
     {
-	    private readonly string _nodeUrl;
+        private readonly string _nodeUrl;
 
-		public RecentCore() 
-			: this(Constants.RecentProject.NodeUrl)
-		{ }
+        public RecentCore()
+            : this(Constants.RecentProject.NodeUrl)
+        { }
 
-	    public RecentCore(string nodeUrl)
-	    {
-		    _nodeUrl = nodeUrl;
+        public RecentCore(string nodeUrl)
+        {
+            _nodeUrl = nodeUrl;
             _web3 = new Web3(_nodeUrl);
 
         }
@@ -38,10 +37,10 @@ namespace RecentLib
 
 
 
-        protected async Task<OutgoingTransaction> executeBlockchainTransaction(string souceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt,CancellationTokenSource cancellationToken, HexBigInteger value = null)
+        protected async Task<OutgoingTransaction> executeBlockchainTransaction(string souceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt, CancellationTokenSource cancellationToken, HexBigInteger value = null)
         {
-            var gas =await function.EstimateGasAsync(souceAddress, null, value, input);
-            var gasPrice =getGasPrice();
+            var gas = await function.EstimateGasAsync(souceAddress, null, value, input);
+            var gasPrice = getGasPrice();
             var txId = "";
             if (!calcNetFeeOnly)
             {
@@ -49,14 +48,20 @@ namespace RecentLib
 
                 if (waitReceipt)
                 {
-                    txId = (await function.SendTransactionAndWaitForReceiptAsync(txInput,cancellationToken, input)).TransactionHash;
+                    var receipt = await function.SendTransactionAndWaitForReceiptAsync(txInput, cancellationToken, input);
+                    while (string.IsNullOrEmpty(receipt.BlockHash))
+                    {                       
+                        await Task.Delay(100);
+                        receipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(receipt.TransactionHash);
+                    }
+                    txId = receipt.TransactionHash;
                 }
                 else
                 {
-                    txId =await function.SendTransactionAsync(txInput, input);
+                    txId = await function.SendTransactionAsync(txInput, input);
                 }
-                
-                
+
+
             }
             //var nonce=web3.Eth.TransactionManager.Account.NonceService.GetNextNonceAsync().Result;
             return new OutgoingTransaction { txId = txId, networkFee = Web3.Convert.FromWei(gas.Value * gasPrice), gasLimit = gas, gasPrice = gasPrice };
@@ -71,7 +76,7 @@ namespace RecentLib
         {
 
             var ecKey = EthECKey.GenerateKey();
-            _wallet= new WalletData { address = ecKey.GetPublicAddress(), PK = ecKey.GetPrivateKey() };
+            _wallet = new WalletData { address = ecKey.GetPublicAddress(), PK = ecKey.GetPrivateKey() };
             _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), _nodeUrl);
             return _wallet;
 
@@ -127,7 +132,7 @@ namespace RecentLib
         {
 
             var address = EthECKey.GetPublicAddress(PK);
-            _wallet=new WalletData { address = address, PK = PK};
+            _wallet = new WalletData { address = address, PK = PK };
             _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), _nodeUrl);
             return _wallet;
 
@@ -159,7 +164,7 @@ namespace RecentLib
             var account = wallet.GetAccount(0);
             _wallet = new WalletData { address = account.Address, PK = account.PrivateKey };
             _web3 = new Web3(account, _nodeUrl);
-            return new WalletData { address = account.Address, PK = account.PrivateKey};
+            return new WalletData { address = account.Address, PK = account.PrivateKey };
         }
 
 
@@ -211,7 +216,7 @@ namespace RecentLib
         /// <returns></returns>
         private BigInteger getGasPrice()
         {
-            return Web3.Convert.ToWei(GasPrice,EthUnit.Gwei);
+            return Web3.Convert.ToWei(GasPrice, EthUnit.Gwei);
         }
 
         /// <summary>
@@ -277,16 +282,16 @@ namespace RecentLib
         /// </summary>
         /// <param name="txId">The transaction hash</param>
         /// <returns>Tuple<Null => Unconfirmed else the number of confirmations, Succeeded or Failed></returns>
-        public async Task<Tuple<ulong?,bool>> getTransactionConfirmations(string txId)
+        public async Task<Tuple<ulong?, bool>> getTransactionConfirmations(string txId)
         {
             TransactionReceipt transactionReceipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId);
             if (transactionReceipt != null)
             {
-                return new Tuple<ulong?, bool> ((ulong)transactionReceipt.BlockNumber.Value - await getLastBlock(), transactionReceipt.Status.Value == 1);
+                return new Tuple<ulong?, bool>((ulong)transactionReceipt.BlockNumber.Value - await getLastBlock(), transactionReceipt.Status.Value == 1);
             }
             else
             {
-                return new Tuple<ulong?, bool>(null,false);
+                return new Tuple<ulong?, bool>(null, false);
             }
         }
 
@@ -327,7 +332,7 @@ namespace RecentLib
             var txId = "";
             if (!calcNetFeeOnly)
             {
-                
+
 
                 if (waitReceipt)
                 {

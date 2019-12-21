@@ -285,70 +285,27 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "address",
-				"name": "relayer",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "domain",
-				"type": "string"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "fee",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "offchainTxDelay",
-				"type": "uint256"
-			}
-		],
-		"name": "RelayerAdded",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "relayer",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "domain",
-				"type": "string"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
 				"internalType": "uint256",
 				"name": "epoch",
 				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "relayer",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "domain",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
 			},
 			{
 				"indexed": false,
@@ -375,6 +332,12 @@
 	{
 		"anonymous": false,
 		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "epoch",
+				"type": "uint256"
+			},
 			{
 				"indexed": true,
 				"internalType": "address",
@@ -414,15 +377,15 @@
 		"inputs": [
 			{
 				"indexed": true,
-				"internalType": "address",
-				"name": "relayer",
-				"type": "address"
-			},
-			{
-				"indexed": false,
 				"internalType": "uint256",
 				"name": "epoch",
 				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "relayer",
+				"type": "address"
 			},
 			{
 				"indexed": false,
@@ -483,51 +446,6 @@
 		],
 		"name": "UserWithdraw",
 		"type": "event"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "domain",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "fee",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxUsers",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxCoins",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxTxThroughput",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "offchainTxDelay",
-				"type": "uint256"
-			}
-		],
-		"name": "addRelayer",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
 	},
 	{
 		"constant": true,
@@ -692,69 +610,6 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "currentRelayerCoins",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "currentRelayerTxThroughput",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "currentRelayerUsers",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"constant": false,
 		"inputs": [
 			{
@@ -818,17 +673,17 @@
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "epochRelayerOwnerByIndex",
-		"outputs": [
-			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"name": "epochRelayerIndex",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -1041,6 +896,27 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
+				"name": "requestedBlock",
+				"type": "uint256"
+			}
+		],
+		"name": "getEpochByBlock",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "epoch",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
 				"name": "maxUsers",
 				"type": "uint256"
 			},
@@ -1148,37 +1024,11 @@
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "relayerDepositPerEpoch",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"constant": false,
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "epoch",
+				"name": "targetEpoch",
 				"type": "uint256"
 			}
 		],
@@ -1192,9 +1042,14 @@
 		"constant": true,
 		"inputs": [
 			{
-				"internalType": "address",
+				"internalType": "uint256",
 				"name": "",
-				"type": "address"
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"name": "relayers",
@@ -1231,17 +1086,32 @@
 			},
 			{
 				"internalType": "uint256",
+				"name": "currentUsers",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "currentCoins",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "currentTxThroughput",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
 				"name": "offchainTxDelay",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "epoch",
+				"name": "fee",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "fee",
+				"name": "remainingPenaltyFunds",
 				"type": "uint256"
 			}
 		],
@@ -1273,6 +1143,11 @@
 	{
 		"constant": false,
 		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "targetEpoch",
+				"type": "uint256"
+			},
 			{
 				"internalType": "string",
 				"name": "domain",
@@ -1354,6 +1229,11 @@
 	{
 		"constant": false,
 		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "targetEpoch",
+				"type": "uint256"
+			},
 			{
 				"internalType": "string",
 				"name": "domain",
