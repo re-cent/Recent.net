@@ -88,8 +88,13 @@ namespace UnitTest
             else
             {
                 currentEpoch += 1;
-                var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
-                relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
+                var nextEpochRelayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
+                if (relayer.maxUsers == 0)
+                {
+                    var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
+                    nextEpochRelayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
+                }
+
             }
 
 
@@ -116,12 +121,101 @@ namespace UnitTest
             {
                 var tx = userLib.depositToRelayer(relayer.owner, 0.01m, currentBlock + 10, false, true, null).Result;
                 userBalanceOnRelayer = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
+                relayer = userLib.getRelayer(relayer.owner, true, userWallet.address).Result;
+                Assert.AreEqual(relayer.currentUsers, (uint)1);
                 Assert.AreEqual(userBalanceOnRelayer.balance, 0.01m);
             }
-            
-            
 
+
+            var serviceProviderLib = new RecentCore(NodeUrl);
+            var serviceProviderWallet = serviceProviderLib.importWalletFromPK("B68811986F995A45C66CF30D7C9A015268A1BB2E4697D6DBB23D7B96FC3607B0");
+
+            var beneficiaryAddress = "0xd316413c82bc4a23c2b52d43504f91c15f906208";
             
+            var nonce = Guid.NewGuid().ToString("N");
+            var offchainPaymentAmount = 0m;
+            for (int i=0; i<1;i++)
+            {
+                var delta = 0.001m;
+                offchainPaymentAmount += 0.001m;
+                var offchainTx = new SignedOffchainTransaction { amount = userLib.recentToWei(offchainPaymentAmount), beneficiary = beneficiaryAddress, fee = (uint)(relayer.fee * 10m), nonce = nonce, relayerId = relayer.owner };
+
+                var signedTx = userLib.signOffchainPayment(offchainTx).Result;
+                var signerTest = userLib.checkOffchainSignature(signedTx).Result;
+
+
+
+                currentBlock = relayerLib.getLastBlock().Result;
+                offchainTx.txUntilBlock = currentBlock + relayer.offchainTxDelay;
+
+                var signedFromRelayerTx = relayerLib.relayerSignOffchainPayment(signedTx).Result;
+                var relayerTest = relayerLib.checkOffchainRelayerSignature(signedTx).Result;
+
+                var beneficiaryBalanceBefore = userLib.getBalance(beneficiaryAddress).Result;
+                var userBalanceOnRelayerBefore = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
+                var relayerBalanceBefore = userLib.getBalance(relayer.owner).Result;
+                var signerBeneficiaryRelationForNonceBefore = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, nonce).Result;
+
+
+
+                var txOutput = serviceProviderLib.finalizeOffchainRelayerTransaction(signedFromRelayerTx, false, true, null).Result;
+
+
+                var signerBeneficiaryRelationForNonceAfter = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, nonce).Result;
+                var beneficiaryBalanceAfter = userLib.getBalance(beneficiaryAddress).Result;
+                var userBalanceOnRelayerAfter = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
+                var relayerBalanceAfter = userLib.getBalance(relayer.owner).Result;
+
+
+                var fee = delta * relayer.fee / 100m;
+                Assert.AreEqual(signerBeneficiaryRelationForNonceBefore + delta, signerBeneficiaryRelationForNonceAfter);
+                Assert.AreEqual(relayerBalanceBefore + fee, relayerBalanceAfter);
+                Assert.AreEqual(beneficiaryBalanceBefore + delta - fee, beneficiaryBalanceAfter);
+                Assert.AreEqual(userBalanceOnRelayerBefore.balance - delta, userBalanceOnRelayerAfter.balance);
+
+            }
+
+
+
+            offchainPaymentAmount = 0.001m;
+            nonce = Guid.NewGuid().ToString("N");
+
+
+            var offchainTxPenaltyFunded = new SignedOffchainTransaction { amount = userLib.recentToWei(offchainPaymentAmount), beneficiary = beneficiaryAddress, fee = (uint)(relayer.fee * 10m), nonce = nonce, relayerId = relayer.owner };
+
+            var signedTxPenaltyFunded = userLib.signOffchainPayment(offchainTxPenaltyFunded).Result;
+            var signerTestPenaltyFunded = userLib.checkOffchainSignature(signedTxPenaltyFunded).Result;
+
+
+
+            currentBlock = relayerLib.getLastBlock().Result;
+            offchainTxPenaltyFunded.txUntilBlock = currentBlock + 1;
+
+            var signedFromRelayerTxPenaltyFunded = relayerLib.relayerSignOffchainPayment(signedTxPenaltyFunded).Result;
+            var relayerTestPenaltyFunded = relayerLib.checkOffchainRelayerSignature(signedTxPenaltyFunded).Result;
+
+            var beneficiaryBalanceBeforePenaltyFunded = userLib.getBalance(beneficiaryAddress).Result;
+            var userBalanceOnRelayerBeforePenaltyFunded = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
+            var relayerBalanceBeforePenaltyFunded = userLib.getBalance(relayer.owner).Result;
+            var signerBeneficiaryRelationForNonceBeforePenaltyFunded = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, nonce).Result;
+
+            var relayerPenaltyFundsBefore = relayerLib.getRelayer(relayer.owner).Result.remainingPenaltyFunds;
+
+            var txOutputPenaltyFunded = serviceProviderLib.finalizeOffchainRelayerTransaction(signedFromRelayerTxPenaltyFunded, false, true, null).Result;
+
+
+            var signerBeneficiaryRelationForNonceAfterPenaltyFunded = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, nonce).Result;
+            var beneficiaryBalanceAfterPenaltyFunded = userLib.getBalance(beneficiaryAddress).Result;
+            var userBalanceOnRelayerAfterPenaltyFunded = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
+            var relayerBalanceAfterPenaltyFunded = userLib.getBalance(relayer.owner).Result;
+            var relayerPenaltyFundsAfter = relayerLib.getRelayer(relayer.owner).Result.remainingPenaltyFunds;
+
+            var feePenaltyFunded = 0m;
+            Assert.AreEqual(relayerPenaltyFundsBefore - offchainPaymentAmount, relayerPenaltyFundsAfter);
+            Assert.AreEqual(signerBeneficiaryRelationForNonceBeforePenaltyFunded + offchainPaymentAmount, signerBeneficiaryRelationForNonceAfterPenaltyFunded);
+            Assert.AreEqual(relayerBalanceBeforePenaltyFunded + feePenaltyFunded, relayerBalanceAfterPenaltyFunded);
+            Assert.AreEqual(beneficiaryBalanceBeforePenaltyFunded + offchainPaymentAmount - feePenaltyFunded, beneficiaryBalanceAfterPenaltyFunded);
+            Assert.AreEqual(userBalanceOnRelayerBeforePenaltyFunded.balance, userBalanceOnRelayerAfterPenaltyFunded.balance);
 
 
         }

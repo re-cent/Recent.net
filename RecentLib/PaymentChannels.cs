@@ -107,6 +107,14 @@ namespace RecentLib
 
         }
 
+        public async Task<decimal> userToBeneficiaryFinalizedAmountForNonce(string signer, string beneficiary, string nonce)
+        {
+            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            var function = contract.GetFunction("userToBeneficiaryFinalizedAmountForNonce");
+            return weiToRecent(await function.CallAsync<BigInteger>(signer, beneficiary, nonce));
+
+        }
+
         /// <summary>
         /// Get registered Relayers
         /// </summary>
@@ -171,9 +179,7 @@ namespace RecentLib
                 throw new Exception("Invalid signature");
             }
 
-            var currentBlock = await getLastBlock();
-            var relayer = await getRelayer(_wallet.address);
-            offchainTransaction.txUntilBlock = currentBlock + relayer.offchainTxDelay;
+
 
             var signer = new MessageSigner();
             var encoder = new ABIEncode();
@@ -225,6 +231,28 @@ namespace RecentLib
             offchainTransaction.s = signature.S;
             offchainTransaction.signer = _wallet.address;
             return offchainTransaction;
+        }
+
+        public async Task<OutgoingTransaction> finalizeOffchainRelayerTransaction(SignedOffchainTransaction signedOffchainTransaction, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        {
+            var txInput = new object[]
+            {
+                signedOffchainTransaction.h,
+                signedOffchainTransaction.v,
+                signedOffchainTransaction.r,
+                signedOffchainTransaction.s,
+                signedOffchainTransaction.rh,
+                signedOffchainTransaction.rv,
+                signedOffchainTransaction.rr,
+                signedOffchainTransaction.rs,
+                signedOffchainTransaction.nonce,
+                signedOffchainTransaction.fee,
+                signedOffchainTransaction.txUntilBlock,
+                signedOffchainTransaction.beneficiary,
+                signedOffchainTransaction.amount
+        };
+            return await executePaymentChannelsMethod("finalizeOffchainRelayerTransaction", txInput, calcNetFeeOnly, waitReceipt, cancellationToken);
+
         }
 
 
