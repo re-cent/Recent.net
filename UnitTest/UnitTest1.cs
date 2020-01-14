@@ -76,6 +76,9 @@ namespace UnitTest
         {
             var relayerLib = new RecentCore(NodeUrl);
             var relayerWallet = relayerLib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+
+            var relayers = relayerLib.getRelayers(null).Result;
+
             var currentEpoch = relayerLib.getCurrentEpoch().Result;
             var relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
             var requiredAmount = relayerLib.getFundRequiredForRelayer(10, 10, 1).Result;
@@ -89,7 +92,7 @@ namespace UnitTest
             {
                 currentEpoch += 1;
                 var nextEpochRelayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
-                if (relayer.maxUsers == 0)
+                if (nextEpochRelayer.maxUsers == 0)
                 {
                     var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
                     nextEpochRelayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;

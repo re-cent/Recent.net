@@ -132,7 +132,7 @@ namespace RecentLib
             var ret = new List<Relayer>();
             Parallel.For(0, totalRelayersCount, i =>
             {
-                ret.Add(getRelayer(epoch.Value, (uint)i).Result);
+                ret.Add(getRelayer(epoch.Value, (uint)i+1).Result);
 
             });
             return ret;
