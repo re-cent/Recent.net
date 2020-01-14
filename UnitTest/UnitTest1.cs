@@ -77,7 +77,7 @@ namespace UnitTest
             var relayerLib = new RecentCore(NodeUrl);
             var relayerWallet = relayerLib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
 
-            var relayers = relayerLib.getRelayers(null).Result;
+            var relayers = relayerLib.getRelayers(null, true, relayerWallet.address).Result;
 
             var currentEpoch = relayerLib.getCurrentEpoch().Result;
             var relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;

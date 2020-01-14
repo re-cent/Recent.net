@@ -119,7 +119,7 @@ namespace RecentLib
         /// Get registered Relayers
         /// </summary>
         /// <returns>The list of Relayers</returns>
-        public async Task<List<Relayer>> getRelayers(uint? epoch)
+        public async Task<List<Relayer>> getRelayers(uint? epoch, bool includeBalance = false, string balanceAddress = "")
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
             var function = contract.GetFunction("relayersCounter");
@@ -130,9 +130,9 @@ namespace RecentLib
             uint totalRelayersCount = (uint)await function.CallAsync<BigInteger>(epoch);
 
             var ret = new List<Relayer>();
-            Parallel.For(0, totalRelayersCount, i =>
+            Parallel.For(1, totalRelayersCount + 1, i =>
             {
-                ret.Add(getRelayer(epoch.Value, (uint)i+1).Result);
+                ret.Add(getRelayer(epoch.Value, (uint)i, includeBalance, balanceAddress).Result);
 
             });
             return ret;
