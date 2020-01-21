@@ -287,7 +287,11 @@ namespace RecentLib
             TransactionReceipt transactionReceipt = await _web3.Eth.Transactions.GetTransactionReceipt.SendRequestAsync(txId);
             if (transactionReceipt != null)
             {
-                return new Tuple<ulong?, bool>((ulong)transactionReceipt.BlockNumber.Value - await getLastBlock(), transactionReceipt.Status.Value == 1);
+                return new Tuple<ulong?, bool>(
+                    !transactionReceipt.BlockNumber.Value.IsZero
+                    ? (ulong)transactionReceipt.BlockNumber.Value - await getLastBlock()
+                    : (ulong?)null, 
+                    transactionReceipt.Status.Value == 1);
             }
             else
             {
