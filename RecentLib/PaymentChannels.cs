@@ -205,7 +205,7 @@ namespace RecentLib
             return offchainTransaction;
         }
 
-        public async Task<SignedOffchainTransaction> signOffchainPayment(SignedOffchainTransaction offchainTransaction)
+        public SignedOffchainTransaction signOffchainPayment(SignedOffchainTransaction offchainTransaction)
         {
             var signer = new MessageSigner();
             var encoder = new ABIEncode();
