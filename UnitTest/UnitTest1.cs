@@ -141,7 +141,12 @@ namespace UnitTest
             {
                 var delta = 0.001m;
                 offchainPaymentAmount += 0.001m;
-                var offchainTx = new SignedOffchainTransaction { amount = userLib.recentToWei(offchainPaymentAmount), beneficiary = beneficiaryAddress, fee = (uint)(relayer.fee * 10m), nonce = nonce, relayerId = relayer.owner };
+                var offchainTx = new SignedOffchainTransaction { 
+                    amount = userLib.recentToWei(offchainPaymentAmount), 
+                    beneficiary = beneficiaryAddress, 
+                    fee = (uint)(relayer.fee * 10m), 
+                    nonce = nonce, 
+                    relayerId = relayer.owner };
 
                 var signedTx = userLib.signOffchainPayment(offchainTx).Result;
                 var signerTest = userLib.checkOffchainSignature(signedTx).Result;
