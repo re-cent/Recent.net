@@ -143,7 +143,7 @@ namespace UnitTest
                 offchainPaymentAmount += 0.001m;
                 var offchainTx = new SignedOffchainTransaction { amount = userLib.recentToWei(offchainPaymentAmount), beneficiary = beneficiaryAddress, fee = (uint)(relayer.fee * 10m), nonce = nonce, relayerId = relayer.owner };
 
-                var signedTx = userLib.signOffchainPayment(offchainTx).Result;
+                var signedTx = userLib.signOffchainPayment(offchainTx);
                 var signerTest = userLib.checkOffchainSignature(signedTx).Result;
 
 
@@ -186,8 +186,8 @@ namespace UnitTest
 
             var offchainTxPenaltyFunded = new SignedOffchainTransaction { amount = userLib.recentToWei(offchainPaymentAmount), beneficiary = beneficiaryAddress, fee = (uint)(relayer.fee * 10m), nonce = nonce, relayerId = relayer.owner };
 
-            var signedTxPenaltyFunded = userLib.signOffchainPayment(offchainTxPenaltyFunded).Result;
-            var signerTestPenaltyFunded = userLib.checkOffchainSignature(signedTxPenaltyFunded).Result;
+            var signedTxPenaltyFunded = userLib.signOffchainPayment(offchainTxPenaltyFunded);
+            var signerTestPenaltyFunded = userLib.checkOffchainSignature(signedTxPenaltyFunded);
 
 
 
@@ -251,7 +251,7 @@ namespace UnitTest
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
             var tx = new SignedOffchainTransaction { amount = lib.recentToWei(1.2m), beneficiary = wallet.address, fee = (uint)( 12.1m * 10m), nonce =Guid.NewGuid().ToString("N"), relayerId = wallet.address };
-            var signedTx = lib.signOffchainPayment(tx).Result;
+            var signedTx = lib.signOffchainPayment(tx);
             var signerTest = lib.checkOffchainSignature(signedTx).Result;
             var signedFromRelayerTx = lib.relayerSignOffchainPayment(signedTx).Result;
             var relayerTest = lib.checkOffchainRelayerSignature(signedTx).Result;
