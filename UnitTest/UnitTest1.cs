@@ -85,7 +85,7 @@ namespace UnitTest
             if (relayer.maxUsers ==0)
             {
                
-                var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
+                var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", $"Test Epoch {currentEpoch}", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
                 relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
             }
             else
@@ -94,7 +94,7 @@ namespace UnitTest
                 var nextEpochRelayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
                 if (nextEpochRelayer.maxUsers == 0)
                 {
-                    var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", "Test", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
+                    var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", $"Test Epoch {currentEpoch}", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
                     nextEpochRelayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
                 }
 
@@ -227,6 +227,23 @@ namespace UnitTest
 
 
         }
+
+
+        [TestMethod]
+        public void validatorAsCandidate()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            decimal stakingFunds = 100m;
+            decimal witnessesFunds = 100m;
+            var currentBalance = lib.getBalance().Result;
+            var epoch = lib.getCurrentEpoch().Result + 1;
+            var requiredStakingFunds = lib.requiredStakingFunds(epoch).Result;
+            var tx = lib.validatorAsCandidate(stakingFunds, witnessesFunds, false, true, null).Result;
+
+
+        }
+
 
         [TestMethod]
         public void updateRelayer()

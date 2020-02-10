@@ -100,38 +100,80 @@ namespace RecentLib {
         
         /// <summary>
         ///   Looks up a localized string similar to [
-        ///    {
-        ///      &quot;constant&quot;: true,
-        ///      &quot;inputs&quot;: [
-        ///        {
-        ///          &quot;name&quot;: &quot;&quot;,
-        ///          &quot;type&quot;: &quot;address&quot;
-        ///        },
-        ///        {
-        ///          &quot;name&quot;: &quot;&quot;,
-        ///          &quot;type&quot;: &quot;address&quot;
-        ///        }
-        ///      ],
-        ///      &quot;name&quot;: &quot;providerVotes&quot;,
-        ///      &quot;outputs&quot;: [
-        ///        {
-        ///          &quot;name&quot;: &quot;&quot;,
-        ///          &quot;type&quot;: &quot;uint256&quot;
-        ///        }
-        ///      ],
-        ///      &quot;payable&quot;: false,
-        ///      &quot;stateMutability&quot;: &quot;view&quot;,
-        ///      &quot;type&quot;: &quot;function&quot;
-        ///    },
-        ///    {
-        ///      &quot;constant&quot;: true,
-        ///      &quot;inputs&quot;: [
-        ///        {
-        ///         [rest of string was truncated]&quot;;.
+        ///	{
+        ///		&quot;inputs&quot;: [],
+        ///		&quot;payable&quot;: false,
+        ///		&quot;stateMutability&quot;: &quot;nonpayable&quot;,
+        ///		&quot;type&quot;: &quot;constructor&quot;
+        ///	},
+        ///	{
+        ///		&quot;constant&quot;: true,
+        ///		&quot;inputs&quot;: [
+        ///			{
+        ///				&quot;internalType&quot;: &quot;address&quot;,
+        ///				&quot;name&quot;: &quot;&quot;,
+        ///				&quot;type&quot;: &quot;address&quot;
+        ///			},
+        ///			{
+        ///				&quot;internalType&quot;: &quot;address&quot;,
+        ///				&quot;name&quot;: &quot;&quot;,
+        ///				&quot;type&quot;: &quot;address&quot;
+        ///			}
+        ///		],
+        ///		&quot;name&quot;: &quot;consumerVotes&quot;,
+        ///		&quot;outputs&quot;: [
+        ///			{
+        ///				&quot;internalType&quot;: &quot;uint256&quot;,
+        ///				&quot;name&quot;: &quot;&quot;,
+        ///				&quot;type&quot;: &quot;uint256&quot;
+        ///			}
+        ///		],
+        ///		&quot;payable&quot;: false,
+        ///		&quot;stateMutability&quot;: &quot;view&quot;,
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ProfileABI {
             get {
                 return ResourceManager.GetString("ProfileABI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to [
+        ///	{
+        ///		&quot;inputs&quot;: [
+        ///			{
+        ///				&quot;internalType&quot;: &quot;address[]&quot;,
+        ///				&quot;name&quot;: &quot;initial&quot;,
+        ///				&quot;type&quot;: &quot;address[]&quot;
+        ///			}
+        ///		],
+        ///		&quot;payable&quot;: false,
+        ///		&quot;stateMutability&quot;: &quot;nonpayable&quot;,
+        ///		&quot;type&quot;: &quot;constructor&quot;
+        ///	},
+        ///	{
+        ///		&quot;anonymous&quot;: false,
+        ///		&quot;inputs&quot;: [
+        ///			{
+        ///				&quot;indexed&quot;: false,
+        ///				&quot;internalType&quot;: &quot;address[]&quot;,
+        ///				&quot;name&quot;: &quot;currentSet&quot;,
+        ///				&quot;type&quot;: &quot;address[]&quot;
+        ///			}
+        ///		],
+        ///		&quot;name&quot;: &quot;ChangeFinalized&quot;,
+        ///		&quot;type&quot;: &quot;event&quot;
+        ///	},
+        ///	{
+        ///		&quot;constant&quot;: false,
+        ///		&quot;inputs&quot;: [],
+        ///		&quot;name&quot;: &quot;finalizeChange&quot;,
+        ///		&quot;outp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ValidatorsABI {
+            get {
+                return ResourceManager.GetString("ValidatorsABI", resourceCulture);
             }
         }
     }
