@@ -20,7 +20,7 @@ namespace RecentLib
 
         public async Task<Relayer> getRelayer(string owner, bool includeBalance = false, string balanceAddress = "")
         {
-            return await getRelayer(await getCurrentEpoch(), await getEpochRelayerIndex(await getCurrentEpoch(), owner), includeBalance, balanceAddress);
+            return await getRelayer(await getCurrentRelayersEpoch(), await getEpochRelayerIndex(await getCurrentRelayersEpoch(), owner), includeBalance, balanceAddress);
         }
 
 
@@ -79,7 +79,7 @@ namespace RecentLib
             return new DepositOnRelayer { balance = weiToRecent(result.balance), lockUntilBlock = result.lockUntilBlock };
         }
 
-        public async Task<uint> getCurrentEpoch()
+        public async Task<uint> getCurrentRelayersEpoch()
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
             var function = contract.GetFunction("getCurrentEpoch");
@@ -125,7 +125,7 @@ namespace RecentLib
             var function = contract.GetFunction("relayersCounter");
             if (!epoch.HasValue)
             {
-                epoch = await getCurrentEpoch();
+                epoch = await getCurrentRelayersEpoch();
             }
             uint totalRelayersCount = (uint)await function.CallAsync<BigInteger>(epoch);
 

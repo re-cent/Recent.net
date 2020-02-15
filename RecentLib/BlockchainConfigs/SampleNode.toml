@@ -1,0 +1,24 @@
+﻿[parity]
+base_path = "/home/ubuntu/snap/parity/current/.local/share/io.parity.ethereum"
+chain = "/home/ubuntu/recent.json"
+
+[network]
+interface = "0.0.0.0"
+port = 30300
+bootnodes = [
+"enode://b2e348ebf7eda3d5644c26f0ba307ec2f55bffb8d4914541ee4214e98ff66b61fa6360278266f2b69c2d96265ac576c8986a8c04a6474937727cbe45c4254161@52.59.145.24:30300",
+"enode://b9d40eae9a804957d251c69ead3e713405b2b0afd7e2d51facebf2513b5f84ba7c0df106e83fc3d49fdfb42aa972f351a6acf1a83437d350f87e53f0bd423048@52.59.145.24:30301",
+"enode://d0c99ee5a0070d5f8ae286be2b36c6c970c4fb26e5d3f599d3399ffb0d1effdce10541cf2b14ecea4002a72a527e45e9488fe9ce4e6f2373e125e06fbbfcea9d@3.126.59.59:30300",
+"enode://b43d701bd40ff0d80679188b70050831a453c81ec3cf3975f57166c1b863e77609ae6cc09705d80f762e42ce8b43589fd4c058a70fabe00ba12f107224fc8d65@3.126.59.59:30301"
+
+]
+[rpc]
+disable = false
+interface = "0.0.0.0"
+port = 8545
+cors = ["*"]
+apis = ["web3", "eth", "net", "rpc"]
+
+[websockets]
+disable = true
+port = 8546

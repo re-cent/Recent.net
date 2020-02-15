@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RecentLib;
 using RecentLib.Models;
 using System;
-using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace UnitTest
@@ -15,30 +15,16 @@ namespace UnitTest
 
 
         [TestMethod]
-        public void TestMethod1()
+        public void getRelayers()
         {
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            //Parallel.For(0, 100, i =>
-            //{
-            //    var l = lib.addRelayer($"https://2.google.com.{i}", "2.Google.{i}", true, 0.1m, false, null).Result;
-
-            //});
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    var l = lib.addRelayer($"https://www.google.com.{i}", "Google.{i}", true, 0.1m, false, null).Result;
-            //}
-
-            //var r11 = lib.addRelayer("https://www.google.com1", "Google1", true, 0.1m, false, null).Result;
-            //var r12 = lib.addRelayer("https://www.google.com2", "Google1", true, 0.1m, false, null).Result;
-
-            //var r2 = lib.getRelayer("https://www.google.com1").Result;
 
             var r3 = lib.getRelayers(null).Result;
 
-            var cid = lib.uploadBinary(File.ReadAllBytes(@"C:\Users\jzari_000\Pictures\img001.jpg")).Result;
-            var ipfsUrl = lib.getIpfsCIDUrl(cid);
-            File.WriteAllBytes(@"C:\Users\jzari_000\Pictures\" + cid + ".jpg", lib.downloadBinary(cid).Result);
+            //var cid = lib.uploadBinary(File.ReadAllBytes(@"C:\Users\jzari_000\Pictures\img001.jpg")).Result;
+            //var ipfsUrl = lib.getIpfsCIDUrl(cid);
+            //File.WriteAllBytes(@"C:\Users\jzari_000\Pictures\" + cid + ".jpg", lib.downloadBinary(cid).Result);
 
         }
 
@@ -62,10 +48,10 @@ namespace UnitTest
             var balance = lib.getBalance().Result;
             var txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
 
-            
-             wallet = lib.importWalletFromPK("B68811986F995A45C66CF30D7C9A015268A1BB2E4697D6DBB23D7B96FC3607B0");
-             balance = lib.getBalance().Result;
-             txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
+
+            wallet = lib.importWalletFromPK("B68811986F995A45C66CF30D7C9A015268A1BB2E4697D6DBB23D7B96FC3607B0");
+            balance = lib.getBalance().Result;
+            txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
         }
 
 
@@ -79,12 +65,12 @@ namespace UnitTest
 
             var relayers = relayerLib.getRelayers(null, true, relayerWallet.address).Result;
 
-            var currentEpoch = relayerLib.getCurrentEpoch().Result;
+            var currentEpoch = relayerLib.getCurrentRelayersEpoch().Result;
             var relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
             var requiredAmount = relayerLib.getFundRequiredForRelayer(10, 10, 1).Result;
-            if (relayer.maxUsers ==0)
+            if (relayer.maxUsers == 0)
             {
-               
+
                 var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://www.abc.com/", $"Test Epoch {currentEpoch}", 12.1m, 10, 10, 1, 1000, requiredAmount, false, true, null).Result;
                 relayer = relayerLib.getRelayer(currentEpoch, relayerWallet.address).Result;
             }
@@ -106,7 +92,7 @@ namespace UnitTest
             var userLib = new RecentCore(NodeUrl);
             var userWallet = userLib.importWalletFromPK("E5ADE4B50BA041A9C77DBA91401BEA949393F2C24433B0338702E7AE06443089");
             var userBalance = userLib.getBalance().Result;
-            if (userBalance==0)
+            if (userBalance == 0)
             {
                 var tx = userLib.transfer(0.01m, userWallet.address, null, false, true, null).Result;
                 Assert.AreEqual(userLib.getBalance().Result, 0.01m);
@@ -120,7 +106,7 @@ namespace UnitTest
                 userBalanceOnRelayer = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
                 Assert.AreEqual(userBalanceOnRelayer.balance, 0m);
             }
-            if (userBalanceOnRelayer.balance==0m)
+            if (userBalanceOnRelayer.balance == 0m)
             {
                 var tx = userLib.depositToRelayer(relayer.owner, 0.01m, currentBlock + 10, false, true, null).Result;
                 userBalanceOnRelayer = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
@@ -134,19 +120,21 @@ namespace UnitTest
             var serviceProviderWallet = serviceProviderLib.importWalletFromPK("B68811986F995A45C66CF30D7C9A015268A1BB2E4697D6DBB23D7B96FC3607B0");
 
             var beneficiaryAddress = "0xd316413c82bc4a23c2b52d43504f91c15f906208";
-            
+
             var nonce = Guid.NewGuid().ToString("N");
             var offchainPaymentAmount = 0m;
-            for (int i=0; i<1;i++)
+            for (int i = 0; i < 1; i++)
             {
                 var delta = 0.001m;
                 offchainPaymentAmount += 0.001m;
-                var offchainTx = new SignedOffchainTransaction { 
-                    amount = userLib.recentToWei(offchainPaymentAmount), 
-                    beneficiary = beneficiaryAddress, 
-                    fee = (uint)(relayer.fee * 10m), 
-                    nonce = nonce, 
-                    relayerId = relayer.owner };
+                var offchainTx = new SignedOffchainTransaction
+                {
+                    amount = userLib.recentToWei(offchainPaymentAmount),
+                    beneficiary = beneficiaryAddress,
+                    fee = (uint)(relayer.fee * 10m),
+                    nonce = nonce,
+                    relayerId = relayer.owner
+                };
 
                 var signedTx = userLib.signOffchainPayment(offchainTx);
                 var signerTest = userLib.checkOffchainSignature(signedTx).Result;
@@ -234,13 +222,67 @@ namespace UnitTest
         {
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            decimal stakingFunds = 100m;
+            var balance = lib.getBalance().Result;
             decimal witnessesFunds = 100m;
             var currentBalance = lib.getBalance().Result;
-            var epoch = lib.getCurrentEpoch().Result + 1;
+            var epoch = lib.getCurrentValidatorsEpoch().Result + 1;
             var requiredStakingFunds = lib.requiredStakingFunds(epoch).Result;
-            var tx = lib.validatorAsCandidate(stakingFunds, witnessesFunds, false, true, null).Result;
+            var candidates = lib.getCandidatesDetailsByEpoch(epoch).Result;
+            var totalRequiedFunds = requiredStakingFunds + witnessesFunds;
+            if (candidates.Select(u => u.address.ToLower()).ToList().IndexOf(wallet.address.ToLower()) == -1)
+            {
+                if (currentBalance < totalRequiedFunds + 1m)
+                {
+                    var validator2Lib = new RecentCore(NodeUrl);
+                    var validator2Wallet = validator2Lib.importWalletFromPK("E5ADE4B50BA041A9C77DBA91401BEA949393F2C24433B0338702E7AE06443089");
+                    var validato2Balance = validator2Lib.getBalance().Result;
 
+                    var txTransfer = validator2Lib.transfer(totalRequiedFunds - currentBalance + 1m, wallet.address, null, false, true, null).Result;
+
+
+                }
+
+                var tx = lib.validatorAsCandidate(requiredStakingFunds, witnessesFunds, false, true, null).Result;
+
+            }
+
+
+
+        }
+
+        [TestMethod]
+        public void voteValidatorAsWitness()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var epoch = lib.getCurrentValidatorsEpoch().Result + 1;
+
+            var candidates = lib.getCandidatesDetailsByEpoch(epoch).Result;
+            var candidate = candidates.FirstOrDefault();
+            var balance = lib.getBalance().Result;
+            var requiredBalance = lib.witnessRequiredBalancePercent().Result;
+            if (candidate!=null)
+            {
+                var tx = lib.voteValidatorAsWitness(candidate.address, balance * requiredBalance / 100m, false, true, null).Result;
+            }
+
+        }
+
+        [TestMethod]
+        public void voteValidatorAsServiceProvider()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var epoch = lib.getCurrentValidatorsEpoch().Result + 1;
+
+            var candidates = lib.getCandidatesDetailsByEpoch(epoch).Result;
+            var candidate = candidates.FirstOrDefault();
+            var freeMBs = 0.0001m;
+            var balance = lib.getBalance().Result;
+            if (candidate != null)
+            {
+                var tx = lib.voteValidatorAsServiceProvider(candidate.address, freeMBs, false, true, null).Result;
+            }
 
         }
 
@@ -249,12 +291,13 @@ namespace UnitTest
         public void updateRelayer()
         {
             var lib = new RecentCore(NodeUrl);
-            var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var currentEpoch = lib.getCurrentEpoch().Result;
+            //var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
+            var wallet = lib.importWalletFromPK("0x3652ba47bffa5666990c47f7e249cf0dc8d4c61b6bb0d64e67e15f8d88f5c834");
+            var currentEpoch = lib.getCurrentRelayersEpoch().Result;
             var relayer = lib.getRelayer(currentEpoch, wallet.address).Result;
-            var tx = lib.updateRelayer(currentEpoch, "https://www.abc.com/", "Test 1", 12.8m, 1000 , false, true, null).Result;
+            var tx = lib.updateRelayer(currentEpoch, "http://192.168.0.36:5001", relayer.name, relayer.fee, relayer.offchainTxDelay, false, true, null).Result;
             relayer = lib.getRelayer(currentEpoch, wallet.address).Result;
-            Assert.AreEqual(relayer.fee, 12.8m);
+            Assert.AreEqual(relayer.domain, "http://192.168.0.36:5001");
 
         }
 
@@ -272,7 +315,7 @@ namespace UnitTest
         {
             var lib = new RecentCore(NodeUrl);
             var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var tx = new SignedOffchainTransaction { amount = lib.recentToWei(1.2m), beneficiary = wallet.address, fee = (uint)( 12.1m * 10m), nonce =Guid.NewGuid().ToString("N"), relayerId = wallet.address };
+            var tx = new SignedOffchainTransaction { amount = lib.recentToWei(1.2m), beneficiary = wallet.address, fee = (uint)(12.1m * 10m), nonce = Guid.NewGuid().ToString("N"), relayerId = wallet.address };
             var signedTx = lib.signOffchainPayment(tx);
             var signerTest = lib.checkOffchainSignature(signedTx).Result;
             var signedFromRelayerTx = lib.relayerSignOffchainPayment(signedTx).Result;
@@ -310,7 +353,7 @@ namespace UnitTest
                 // handle or rethrow the exceptions
             }
 
-            catch (Exception Ex)
+            catch (Exception)
             {
                 Assert.Fail("Exception!");
             }
@@ -322,7 +365,7 @@ namespace UnitTest
         public void stressDepositsToRelayer()
         {
 
-            var alala= stressDepostisToRelayerParallel().Result;
+            var alala = stressDepostisToRelayerParallel().Result;
 
 
 

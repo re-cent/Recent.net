@@ -166,10 +166,11 @@ namespace RecentLib {
         ///		&quot;type&quot;: &quot;event&quot;
         ///	},
         ///	{
-        ///		&quot;constant&quot;: false,
-        ///		&quot;inputs&quot;: [],
-        ///		&quot;name&quot;: &quot;finalizeChange&quot;,
-        ///		&quot;outp [rest of string was truncated]&quot;;.
+        ///		&quot;anonymous&quot;: false,
+        ///		&quot;inputs&quot;: [
+        ///			{
+        ///				&quot;indexed&quot;: true,
+        ///				&quot;inte [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ValidatorsABI {
             get {
