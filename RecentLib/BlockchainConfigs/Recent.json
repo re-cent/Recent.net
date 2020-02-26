@@ -1,0 +1,79 @@
+﻿{
+    "name": "Recent",
+    "engine": {
+        "authorityRound": {
+            "params": {
+                "stepDuration": "5",
+				"blockReward": "10000000000000000",
+				"blockRewardContractAddress": "0x3FDc40A61642DB0C7B68d87Aec41F337c8C9c544",
+				"blockRewardContractTransition": "900",
+				"validators" : {
+    "multi": {
+        "0": {
+            "list": ["0x783f3d3fe426508d4cb70e7e957524ec8fb383f7","0xd5e1a408107cb433f46245dc307c40d975a63814","0xed092f2fea220bf1dc9e004951a91a96eae77a9a","0x515fe0b36d3003acf7e5bd9bca82d9a6ac664837"]
+        },
+	"200": {
+            "contract": "0x2de434a49716ac2B82f7a1726E714E0804a98D5a"
+        },
+	"80200": {
+            "contract": "0x34979019dcdB038d7018d3fcA813E8387e9f8AbF"
+        },
+	"80400": {
+            "contract": "0xa9BAe11A0f4D437c7CE47f0a2C2b6614F43978E7"
+        }
+
+
+    }
+}
+            }
+        }
+    },
+    "params": {
+        "gasLimitBoundDivisor": "0x400",
+        "maximumExtraDataSize": "0x20",
+        "minGasLimit": "0x1388",
+        "networkID" : 12858955,
+	"chainID": 12858955,
+        "eip140Transition": 0,
+        "eip211Transition": 0,
+        "eip214Transition": 0,
+        "eip658Transition": 0,
+        "eip145Transition": 0,
+        "eip1014Transition": 0,
+        "eip1052Transition": 0,
+	"wasmActivationTransition": 0
+    },
+    "genesis": {
+        "seal": {
+            "authorityRound": {
+                "step": "0x0",
+                "signature": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+        },
+        "difficulty": "0x10000",
+        "gasLimit": "0x989680"
+    },
+    "accounts": {
+        "0x0000000000000000000000000000000000000001": { "balance": "1", "builtin": { "name": "ecrecover", "pricing": { "linear": { "base": 3000, "word": 0 } } } },
+        "0x0000000000000000000000000000000000000002": { "balance": "1", "builtin": { "name": "sha256", "pricing": { "linear": { "base": 60, "word": 12 } } } },
+        "0x0000000000000000000000000000000000000003": { "balance": "1", "builtin": { "name": "ripemd160", "pricing": { "linear": { "base": 600, "word": 120 } } } },
+        "0x0000000000000000000000000000000000000004": { "balance": "1", "builtin": { "name": "identity", "pricing": { "linear": { "base": 15, "word": 3 } } } },
+	"0x0000000000000000000000000000000000000005": { "builtin": { "name": "modexp", "activate_at": "0x0", "pricing": { "modexp": { "divisor": 20 } } } },
+	"0x0000000000000000000000000000000000000006": { "builtin": { "name": "alt_bn128_add", "activate_at": "0x0", "pricing": { "linear": { "base": 500, "word": 0 } } } },
+	"0x0000000000000000000000000000000000000007": { "builtin": { "name": "alt_bn128_mul", "activate_at": "0x0", "pricing": { "linear": { "base": 40000, "word": 0 } } } },
+			"0x0000000000000000000000000000000000000008": {
+			"builtin": {
+				"name": "alt_bn128_pairing",
+				"pricing": {
+					"0x0": {
+						"price": { "alt_bn128_pairing": { "base": 100000, "pair": 80000 }}
+					}
+				}
+			}
+		},
+	"0x16A472DAE0dD16A0140aB26A2F92B426a5b21386": { "balance": "1000000000000000000000000", "nonce": "0x0"},
+	"0x885E6896E06B95342f6C2021C86ABd8187C4Ae20": { "balance": "1000000000000000000000000", "nonce": "0x0"},
+	"0xed453Cf24bFafe7EC27bc22F53c324Bd8e82565E": { "balance": "1000000000000000000000000", "nonce": "0x0"}
+
+    }
+}

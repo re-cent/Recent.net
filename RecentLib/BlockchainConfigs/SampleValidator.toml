@@ -1,0 +1,27 @@
+﻿[parity]
+base_path = "/home/ubuntu/snap/parity/current/.local/share/io.parity.ethereum/1"
+chain = "/home/ubuntu/Recent/Recent.json"
+[network]
+interface = "0.0.0.0"
+port = 30300
+bootnodes = [
+"enode://d7a18cf7e6d57fc3d16571236d331925f2e827f23d105ca366e3ae0fb7bf604e3110258c6279a7b49025c38ef2579ec7246df55b114dea138b654f0b65056696@3.124.182.37:30300",
+"enode://b9d40eae9a804957d251c69ead3e713405b2b0afd7e2d51facebf2513b5f84ba7c0df106e83fc3d49fdfb42aa972f351a6acf1a83437d350f87e53f0bd423048@52.59.145.24:30301"
+]
+[rpc]
+disable = true
+port = 8545
+apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
+[account]
+password = ["/home/ubuntu/Recent/node.pwds"]
+[websockets]
+disable = true
+port = 8450
+[mining]
+engine_signer = "0x783f3d3fe426508d4cb70e7e957524ec8fb383f7"
+force_sealing = true
+reseal_on_txs = "none"
+min_gas_price = 1000000000
+gas_floor_target = "10000000"
+gas_cap = "100000000"
+extra_data = "Linux 2.1"

@@ -6,11 +6,56 @@ using System.Text;
 using System.Threading.Tasks;
 using RecentLib.Models.Blockchain;
 using System.Threading;
+using Ipfs.Http;
+using System.IO;
 
 namespace RecentLib
 {
     public partial class RecentCore
     {
+
+
+        /// <summary>
+        /// Uploads a binary file to Ipfs
+        /// </summary>
+        /// <param name="binary">The byte array</param>
+        /// <returns>The Ipfs CID</returns>
+        public async Task<string> uploadBinary(byte[] binary)
+        {
+            var ipfs = new IpfsClient(IpfsClientEndpoint);
+
+            var ret = await ipfs.FileSystem.AddAsync(new MemoryStream(binary));
+            return ret.Id.Hash.ToString();
+        }
+
+        /// <summary>
+        /// Downloads a binary file to Ipfs from ipfs
+        /// </summary>
+        /// <param name="cid">The Ipfs CID</param>
+        /// <returns>The byte array</returns>
+        public async Task<byte[]> downloadBinary(string cid)
+        {
+            var ipfs = new IpfsClient(IpfsClientEndpoint);
+            var stream = await ipfs.FileSystem.ReadFileAsync(cid);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                return ms.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Get a URL for uploaded binary
+        /// </summary>
+        /// <param name="cid">The Ipfs CID</param>
+        /// <returns>The Url</returns>
+        public string getIpfsCIDUrl(string cid)
+        {
+            return $"{IpfsGatewayEndpoint}{cid}";
+        }
+
+
+
         /// <summary>
         /// Returns user profile data
         /// </summary>
@@ -71,17 +116,17 @@ namespace RecentLib
         /// </summary>
         /// <param name="userProfile">User profile</param>
         /// <returns></returns>
-        public async Task<OutgoingTransaction> rateAsProvider(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> rateProvider(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             return await executeProfileMethod("rateProvider", new object[] { _wallet.address, (uint)(rating * 100) }, calcNetFeeOnly, waitReceipt, cancellationToken);
         }
 
         /// <summary>
-        /// Rate user as Content Consuler
+        /// Rate user as Content Consumer
         /// </summary>
         /// <param name="userProfile">User profile</param>
         /// <returns></returns>
-        public async Task<OutgoingTransaction> rateAsConsumer(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> rateConsumer(string address, decimal rating, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             return await executeProfileMethod("rateConsumer", new object[] { address, (uint)(rating * 100) }, calcNetFeeOnly, waitReceipt, cancellationToken);
         }
