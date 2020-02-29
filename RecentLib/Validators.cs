@@ -57,17 +57,11 @@ namespace RecentLib
 
         }
 
-        public async Task<decimal> requiredStakingFunds(uint epoch)
+        public async Task<decimal> getRequiredStakingFunds(uint epoch)
         {
             var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("calculateReward");
-            var blocks = await epochBlocks(epoch);
-            var validators = await validatorsNumber();
-            var currentBlock = await getLastBlock();
-            var funds = await function.CallAsync<BigInteger>(currentBlock-1, currentBlock-2);
-            var fundsInRecent =  weiToRecent(funds);
-
-            return blocks * fundsInRecent / validators;
+            var function = contract.GetFunction("getRequiredStakingFunds");
+            return weiToRecent(await function.CallAsync<BigInteger>(epoch));
         }
 
 
@@ -211,10 +205,10 @@ namespace RecentLib
             return await executeValidatorsMethod("voteValidatorAsWitness", new object[] { validator }, calcNetFeeOnly, waitReceipt, cancellationToken, funds);
         }
 
-        public async Task<OutgoingTransaction> voteValidatorAsServiceProvider(string validator, decimal freeContentInMb, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> voteValidatorAsServiceProvider(string validator, uint freeContentInMb, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             decimal requiredFunds = await freeServicePricePerMb() * freeContentInMb;
-            return await executeValidatorsMethod("voteValidatorAsServiceProvider", new object[] { validator, recentToWei(freeContentInMb) }, calcNetFeeOnly, waitReceipt, cancellationToken, requiredFunds);
+            return await executeValidatorsMethod("voteValidatorAsServiceProvider", new object[] { validator, freeContentInMb }, calcNetFeeOnly, waitReceipt, cancellationToken, requiredFunds);
         }
 
         protected async Task<OutgoingTransaction> executeValidatorsMethod(string method, object[] input, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken, decimal? value = null)

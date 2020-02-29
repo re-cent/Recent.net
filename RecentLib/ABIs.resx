@@ -2020,6 +2020,31 @@
 			{
 				"indexed": true,
 				"internalType": "address",
+				"name": "oldValidator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newValidator",
+				"type": "address"
+			}
+		],
+		"name": "ValidatorReplaced",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "epoch",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
 				"name": "validator",
 				"type": "address"
 			},
@@ -2743,30 +2768,41 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "maxUsers",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxCoins",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxTxThroughputPer100000Blocks",
+				"name": "n",
 				"type": "uint256"
 			}
 		],
-		"name": "getFundRequiredForRelayer",
+		"name": "getNumberOfSetBits",
 		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "requiredAmount",
+				"name": "result",
 				"type": "uint256"
 			}
 		],
 		"payable": false,
 		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "epoch",
+				"type": "uint256"
+			}
+		],
+		"name": "getRequiredStakingFunds",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -3016,6 +3052,21 @@
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "validator",
+				"type": "address"
+			}
+		],
+		"name": "replaceValidator",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

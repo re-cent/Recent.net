@@ -226,7 +226,7 @@ namespace UnitTest
             decimal witnessesFunds = 100m;
             var currentBalance = lib.getBalance().Result;
             var epoch = lib.getCurrentValidatorsEpoch().Result + 1;
-            var requiredStakingFunds = lib.requiredStakingFunds(epoch).Result;
+            var requiredStakingFunds = lib.getRequiredStakingFunds(epoch).Result;
             var candidates = lib.getCandidatesDetailsByEpoch(epoch).Result;
             var totalRequiedFunds = requiredStakingFunds + witnessesFunds;
             if (candidates.Select(u => u.address.ToLower()).ToList().IndexOf(wallet.address.ToLower()) == -1)
@@ -277,7 +277,7 @@ namespace UnitTest
 
             var candidates = lib.getCandidatesDetailsByEpoch(epoch).Result;
             var candidate = candidates.FirstOrDefault();
-            var freeMBs = 0.0001m;
+            uint freeMBs = 1;
             var balance = lib.getBalance().Result;
             if (candidate != null)
             {
