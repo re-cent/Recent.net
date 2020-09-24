@@ -13,17 +13,32 @@ using static RecentLib.Constants.RecentProject;
 
 namespace RecentLib
 {
-
+    /// <summary>
+    /// Partial class that contains methods for interaction with RSC(Relayer Smart Contract)
+    /// </summary>
     public partial class RecentCore
     {
 
-
+        /// <summary>
+        /// Get Relayer info for current Epoch
+        /// </summary>
+        /// <param name="owner">The Relayer Owner address(This is the Id of a Relayer)</param>
+        /// <param name="includeBalance">When true retuns the locked amount for Wallet Owner or the balanceAddress parameter</param>
+        /// <param name="balanceAddress">When includeBalance and not empty string returns the locked amount of this address on Requested Relayer</param>
+        /// <returns>The Relayer Info class</returns>
         public async Task<Relayer> getRelayer(string owner, bool includeBalance = false, string balanceAddress = "")
         {
             return await getRelayer(await getCurrentRelayersEpoch(), await getEpochRelayerIndex(await getCurrentRelayersEpoch(), owner), includeBalance, balanceAddress);
         }
 
-
+        /// <summary>
+        /// Get Relayer info for a requested Epoch
+        /// </summary>
+        /// <param name="epoch">The requested Epoch</param>
+        /// <param name="owner">The Relayer Owner address(This is the Id of a Relayer)</param>
+        /// <param name="includeBalance">When true retuns the locked amount for Wallet Owner or the balanceAddress parameter</param>
+        /// <param name="balanceAddress">When includeBalance and not empty string returns the locked amount of this address on Requested Relayer</param>
+        /// <returns>The Relayer Info class</returns>
         public async Task<Relayer> getRelayer(uint epoch, string owner, bool includeBalance = false, string balanceAddress = "")
         {
 
@@ -32,10 +47,13 @@ namespace RecentLib
 
 
 
-        /// <summary>
-        /// Returns Relayer
+        /// Get Relayer info for a requested Epoch
         /// </summary>
-        /// <returns>Relayer</returns>
+        /// <param name="epoch">The requested Epoch</param>
+        /// <param name="index">The index of the requested Relayer in Relayers list</param>
+        /// <param name="includeBalance">When true retuns the locked amount for Wallet Owner or the balanceAddress parameter</param>
+        /// <param name="balanceAddress">When includeBalance and not empty string returns the locked amount of this address on Requested Relayer</param>
+        /// <returns>The Relayer Info class</returns>
         public async Task<Relayer> getRelayer(uint epoch, uint index, bool includeBalance = false, string balanceAddress = "")
         {
 
@@ -71,6 +89,12 @@ namespace RecentLib
             };
         }
 
+        /// <summary>
+        /// Return the locked amount and lock until block 
+        /// </summary>
+        /// <param name="userAddress">The Peer wallet address</param>
+        /// <param name="relayer">The Relayer owner address(Relayer Id)</param>
+        /// <returns>DepositOnRelayer class</returns>
         public async Task<DepositOnRelayer> getUserDepositOnRelayer(string userAddress, string relayer)
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
@@ -79,6 +103,10 @@ namespace RecentLib
             return new DepositOnRelayer { balance = weiToRecent(result.balance), lockUntilBlock = result.lockUntilBlock };
         }
 
+        /// <summary>
+        /// Return the total number of Relayers for current Epoch
+        /// </summary>
+        /// <returns>Number of Relayers</returns>
         public async Task<uint> getCurrentRelayersEpoch()
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
@@ -87,6 +115,10 @@ namespace RecentLib
             return (uint)currentEpoch;
         }
 
+        /// <summary>
+        /// Return the block number that current election period ends
+        /// </summary>
+        /// <returns>Block number</returns>
         public async Task<uint> getCurrentValidatorsElectionEnd()
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
@@ -98,7 +130,12 @@ namespace RecentLib
 
 
 
-
+        /// <summary>
+        /// Return the index of Relayer in Epoch Relayers list
+        /// </summary>
+        /// <param name="epoch">The requested Epoch</param>
+        /// <param name="owner">The Relayer owner address(Relayer Id)</param>
+        /// <returns></returns>
         public async Task<uint> getEpochRelayerIndex(uint epoch, string owner)
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
@@ -107,6 +144,13 @@ namespace RecentLib
 
         }
 
+        /// <summary>
+        /// Return the already settled amount between 2 Peers for a nonce
+        /// </summary>
+        /// <param name="signer">User1</param>
+        /// <param name="beneficiary">User2 (beneficiary)</param>
+        /// <param name="nonce">The unique P2P transaction id</param>
+        /// <returns></returns>
         public async Task<decimal> userToBeneficiaryFinalizedAmountForNonce(string signer, string beneficiary, string nonce)
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
@@ -116,8 +160,11 @@ namespace RecentLib
         }
 
         /// <summary>
-        /// Get registered Relayers
+        /// Get the list registered Relayers for an Epoch
         /// </summary>
+        /// <param name="epoch">The requested Epoch. null for current Epoch</param>
+        /// <param name="includeBalance">When true retuns the locked amount for Wallet Owner or the balanceAddress parameter</param>
+        /// <param name="balanceAddress">When includeBalance and not empty string returns the locked amount of this address on Requested Relayer</param>
         /// <returns>The list of Relayers</returns>
         public async Task<List<Relayer>> getRelayers(uint? epoch, bool includeBalance = false, string balanceAddress = "")
         {
@@ -145,34 +192,41 @@ namespace RecentLib
         /// <summary>
         /// Deposit to Relayer
         /// </summary>
-        /// <param name="id">The Relayer Id</param>
+        /// <param name="owner">The Relayer Owner address(This is the Id of a Relayer)</param>
         /// <param name="amount">The amount</param>
-        /// <param name="lockTimeInDays">Time lock perdio in days</param>
-        /// <returns>The tx</returns>
+        /// <param name="lockUntilBlock">Time lock through Block</param>
+        /// <returns>The Tx</returns>
         public async Task<OutgoingTransaction> depositToRelayer(string owner, decimal amount, uint lockUntilBlock, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
+            //lockUntilBlock should be greater than last mined Block
             if (lockUntilBlock <= await getLastBlock())
                 throw new Exception("lockUntilBlock should be greater than current block");
+            //Invoke RSC
             return await executePaymentChannelsMethod("depositToRelayer", new object[] { owner, lockUntilBlock }, calcNetFeeOnly, waitReceipt, cancellationToken, amount);
         }
 
         /// <summary>
         /// Withdraw funds from Relayer
         /// </summary>
-        /// <param name="domain">The Relayer domain or Ip</param>
+        /// <param name="relayer">The Relayer Owner address(This is the Id of a Relayer)</param>
         /// <param name="amount">The amount</param>
-        /// <returns>The tx</returns>
+        /// <returns>The Tx</returns>
         public async Task<OutgoingTransaction> withdrawFundsFromRelayer(string relayer, decimal amount, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
+            //Invoke RSC
             return await executePaymentChannelsMethod("withdrawFunds", new object[] { relayer, recentToWei(amount) }, calcNetFeeOnly, waitReceipt, cancellationToken, null);
         }
 
 
 
-
+        /// <summary>
+        /// Sign an Offchain Payemnt as Relayer using Wallet private key
+        /// </summary>
+        /// <param name="offchainTransaction">The already signed by Peer Offchain Payment payload</param>
+        /// <returns>The transaction signed by Wallet owner as Relayer</returns>
         public async Task<SignedOffchainTransaction> relayerSignOffchainPayment(SignedOffchainTransaction offchainTransaction)
         {
-
+            //Check that already signed payload is valid
             var validSignature = await checkOffchainSignature(offchainTransaction);
             if (!validSignature)
             {
@@ -205,6 +259,11 @@ namespace RecentLib
             return offchainTransaction;
         }
 
+        /// <summary>
+        /// Sign an Offchain payment as a Peer
+        /// </summary>
+        /// <param name="offchainTransaction">The transaction to be signed</param>
+        /// <returns>The Transaction signed by wallet owner as Peer </returns>
         public SignedOffchainTransaction signOffchainPayment(SignedOffchainTransaction offchainTransaction)
         {
             var signer = new MessageSigner();
@@ -233,6 +292,14 @@ namespace RecentLib
             return offchainTransaction;
         }
 
+        /// <summary>
+        /// Settle an Offchain payment by invoking the RSC. SHould be called by the Relayer tha uas received the transaction for Settlement
+        /// </summary>
+        /// <param name="signedOffchainTransaction">The Signed by both Peer and Relayer payload</param>
+        /// <param name="calcNetFeeOnly"></param>
+        /// <param name="waitReceipt"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The Tx</returns>
         public async Task<OutgoingTransaction> finalizeOffchainRelayerTransaction(SignedOffchainTransaction signedOffchainTransaction, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
             var txInput = new object[]
@@ -255,7 +322,11 @@ namespace RecentLib
 
         }
 
-
+        /// <summary>
+        /// Check the validity of an Offchain Payment payload signed by a Peer
+        /// </summary>
+        /// <param name="signedOffchainTransaction"></param>
+        /// <returns></returns>
         public async Task<bool> checkOffchainSignature(SignedOffchainTransaction signedOffchainTransaction)
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
@@ -267,6 +338,11 @@ namespace RecentLib
         }
 
 
+        /// <summary>
+        /// Check the validity of an Offchain Payment payload signed by a Relayer
+        /// </summary>
+        /// <param name="signedOffchainTransaction"></param>
+        /// <returns></returns>
         public async Task<bool> checkOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
@@ -276,6 +352,11 @@ namespace RecentLib
             return addressEqualityComparer.Equals(signer, signedOffchainTransaction.relayerId);
         }
 
+        /// <summary>
+        /// Convert a Offchain payment payload to byte[]
+        /// </summary>
+        /// <param name="signedOffchainTransaction"></param>
+        /// <returns></returns>
         public async Task<byte[]> getFinalizeOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)
         {
             var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
@@ -283,6 +364,16 @@ namespace RecentLib
             return await function.CallAsync<byte[]>(signedOffchainTransaction.relayerId, signedOffchainTransaction.nonce, signedOffchainTransaction.fee, signedOffchainTransaction.beneficiary, signedOffchainTransaction.amount);
         }
 
+        /// <summary>
+        /// Generic method that invokes RSC methods
+        /// </summary>
+        /// <param name="method">The Smart contract method</param>
+        /// <param name="input">THe input arguments</param>
+        /// <param name="calcNetFeeOnly">Calculate network fees and return. Don't place Tx Onchain</param>
+        /// <param name="waitReceipt">Wait for the Tx to be mined</param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="value">When Tx is payable the amount to be transfered to Smart Contract</param>
+        /// <returns>The Tx</returns>
         protected async Task<OutgoingTransaction> executePaymentChannelsMethod(string method, object[] input, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken, decimal? value = null)
         {
 

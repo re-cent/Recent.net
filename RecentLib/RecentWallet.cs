@@ -17,8 +17,12 @@ using static RecentLib.Constants.RecentProject;
 
 namespace RecentLib
 {
+    /// <summary>
+    /// Core class that contains methods to interact with Ethereum or Ethereum compatible Blockchain like ReCent
+    /// </summary>
     public partial class RecentCore
     {
+        
         private readonly string _nodeUrl;
 
         public RecentCore()
@@ -36,15 +40,29 @@ namespace RecentLib
         internal Web3 _web3 { get; set; }
 
 
-
-        protected async Task<OutgoingTransaction> executeBlockchainTransaction(string souceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt, CancellationTokenSource cancellationToken, HexBigInteger value = null)
+        /// <summary>
+        /// Generic method that invoke a Smart contract method
+        /// </summary>
+        /// <param name="sourceAddress">The caller address</param>
+        /// <param name="input">The input arguments</param>
+        /// <param name="calcNetFeeOnly">Calculate network fees and return. Don't place Tx Onchain</param>
+        /// <param name="function">The Smart Contract method to be invoked</param>
+        /// <param name="waitReceipt">Wait for the Tx to be mined</param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="value">When Tx is payable the amount to be transfered to Smart Contract</param>
+        /// <returns></returns>
+        protected async Task<OutgoingTransaction> executeBlockchainTransaction(string sourceAddress, object[] input, bool calcNetFeeOnly, Function function, bool waitReceipt, CancellationTokenSource cancellationToken, HexBigInteger value = null)
         {
-            var gas = await function.EstimateGasAsync(souceAddress, null, value, input);
+            //Get Gas limit for Tx
+            var gas = await function.EstimateGasAsync(sourceAddress, null, value, input);
+
+            //Get Gas price for Tx
             var gasPrice = getGasPrice();
             var txId = "";
+
             if (!calcNetFeeOnly)
             {
-                var txInput = new TransactionInput("", function.ContractAddress, souceAddress, gas, new HexBigInteger(gasPrice), value);
+                var txInput = new TransactionInput("", function.ContractAddress, sourceAddress, gas, new HexBigInteger(gasPrice), value);
 
                 if (waitReceipt)
                 {
@@ -94,7 +112,7 @@ namespace RecentLib
         /// <summary>
         /// Encrypt wallet and return keystore
         /// </summary>
-        /// <param name="PK">Password</param>
+        /// <param name="password">The Password to be used for encryption</param>
         /// <returns>Keystore</returns>
         public string encryptWallet(string password)
         {
@@ -107,7 +125,8 @@ namespace RecentLib
         /// <summary>
         /// Decrypt and setup wallet from Keystore
         /// </summary>
-        /// <param name="PK">Password</param>
+        /// <param name="keyStore">Encrypted Keystore</param>
+        /// <param name="password">Password used on encryption</param>
         /// <returns>The Wallet</returns>
         public WalletData importFromKeyStore(string keyStore, string password)
         {
@@ -159,7 +178,7 @@ namespace RecentLib
         /// <returns></returns>
         public WalletData importWalletFromSeedPhrase(string seedPhrase)
         {
-            var wordList = seedPhrase.Split(" ".ToCharArray());
+            //var wordList = seedPhrase.Split(" ".ToCharArray());
             Wallet wallet = new Wallet(seedPhrase, null);
             var account = wallet.GetAccount(0);
             _wallet = new WalletData { address = account.Address, PK = account.PrivateKey };
@@ -169,7 +188,7 @@ namespace RecentLib
 
 
         /// <summary>
-        /// Get Recent last mined block
+        /// Get the last mined block
         /// </summary>
         /// <returns></returns>
         public async Task<uint> getLastBlock()
@@ -267,7 +286,7 @@ namespace RecentLib
         }
 
         /// <summary>
-        /// Get address balance
+        /// Get an address balance
         /// </summary>
         /// <returns></returns>
         public async Task<decimal> getBalance(string address)
@@ -320,6 +339,7 @@ namespace RecentLib
         /// <param name="amount">The coins amount</param>
         /// <param name="destinationAddress">The destination address</param>
         /// <param name="gasPrice">Setup GasPrice, null get the current netowkr price</param>
+        /// <param name="waitReceipt">Wait the Tx to be mined</param>
         /// <param name="calcNetFeeOnly">When true calculates the network fee cost, else broadcast transaction to the network</param>
         /// <returns></returns>
         public async Task<OutgoingTransaction> transfer(decimal amount, string destinationAddress, BigInteger? gasPrice, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)

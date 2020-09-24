@@ -13,7 +13,7 @@ namespace RecentLib.Models
         public byte[] s { get; set; }
 
 
-        public string beneficiary { get; set; }
+        public string freeServiceProvider { get; set; }
         public string validator { get; set; }
         public BigInteger freeMb { get; set; }
         public uint epoch { get; set; }

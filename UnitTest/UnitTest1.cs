@@ -371,7 +371,18 @@ namespace UnitTest
 
         }
 
+        [TestMethod]
+        [DataRow("0xb2e21d21637f13f1d1d8b15ede8b7b5743908a72cf88e5040de22eb2325e786f")]
+        public void transactionConfirmations(string txId)
+        {
 
+            var lib = new RecentCore(NodeUrl);
+
+
+            var ret = lib.getTransactionConfirmations(txId).Result;
+
+
+        }
 
         [TestMethod]
         public void gasPrice()
