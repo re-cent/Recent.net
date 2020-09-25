@@ -262,9 +262,9 @@ namespace RecentLib
             var encoder = new ABIEncode();
 
             ABIValue[] ABIValues = new ABIValue[]{
+            new ABIValue("uint", offchainTransaction.epoch),
             new ABIValue("address", offchainTransaction.freeServiceProvider),
             new ABIValue("address", offchainTransaction.validator),
-            new ABIValue("uint", offchainTransaction.epoch),
             new ABIValue("uint256", offchainTransaction.freeMb)
             };
 
