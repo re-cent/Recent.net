@@ -54,7 +54,21 @@ namespace UnitTest
             txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
         }
 
+        [TestMethod]
+        public void RegisterRelayer()
+        {
+            var relayerLib = new RecentCore(NodeUrl);
+            var relayerWallet = relayerLib.importWalletFromPK("E5ADE4B50BA041A9C77DBA91401BEA949393F2C24433B0338702E7AE06443089");
 
+            var currentEpoch = relayerLib.getCurrentRelayersEpoch().Result;
+            uint maxUsers = 10;
+            decimal maxCoins = 1000m;
+            uint maxTxThroughput = 1;
+
+            var requiredAmount = relayerLib.getFundRequiredForRelayer(maxUsers, maxCoins, maxTxThroughput).Result;
+            var tx = relayerLib.requestRelayerLicense(currentEpoch, "https://127.0.0.1:5001/", $"Beter test Epoch {currentEpoch}", 12.1m, maxUsers, maxCoins, maxTxThroughput, 1000, requiredAmount, false, true, null).Result;
+
+        }
 
 
         [TestMethod]
@@ -261,7 +275,7 @@ namespace UnitTest
             var candidate = candidates.FirstOrDefault();
             var balance = lib.getBalance().Result;
             var requiredBalance = lib.witnessRequiredBalancePercent().Result;
-            if (candidate!=null)
+            if (candidate != null)
             {
                 var tx = lib.voteValidatorAsWitness(candidate.address, balance * requiredBalance / 100m, false, true, null).Result;
             }
