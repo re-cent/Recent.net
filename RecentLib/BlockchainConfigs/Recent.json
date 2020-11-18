@@ -6,7 +6,7 @@
         "stepDuration": "5",
         "blockReward": "10000000000000000",
         "blockRewardContractAddress": "0x3FDc40A61642DB0C7B68d87Aec41F337c8C9c544",
-        "blockRewardContractTransition": "900",
+        "blockRewardContractTransition": "10000000000000000",
         "validators": {
           "multi": {
             "0": {
