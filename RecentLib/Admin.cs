@@ -93,8 +93,8 @@ namespace RecentLib
         public async Task<decimal> getFundRequiredForRelayer(uint maxUsers, decimal maxCoins, uint maxTxThroughput)
         {
 
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("getFundRequiredForRelayer");
+
+            var function = _paymentChannelsContract.GetFunction("getFundRequiredForRelayer");
             var fundRequired = await function.CallAsync<BigInteger>(maxUsers, recentToWei(maxCoins), maxTxThroughput);
 
 

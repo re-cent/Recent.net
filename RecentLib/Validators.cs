@@ -26,8 +26,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<uint> epochBlocks()
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("epochBlocks");
+            var function = _validatorsContract.GetFunction("epochBlocks");
             return await function.CallAsync<uint>();
 
         }
@@ -37,8 +36,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<uint> getCurrentValidatorsEpoch()
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("getCurrentEpoch");
+            var function = _validatorsContract.GetFunction("getCurrentEpoch");
             var currentEpoch = await function.CallAsync<BigInteger>();
             return (uint)currentEpoch;
         }
@@ -49,8 +47,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<uint> validatorsNumber()
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("maximumValidatorsNumber");
+            var function = _validatorsContract.GetFunction("maximumValidatorsNumber");
             return await function.CallAsync<uint>();
 
         }
@@ -62,8 +59,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> freeServicePricePerMb()
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("pricePerMb");
+            var function = _validatorsContract.GetFunction("pricePerMb");
             return weiToRecent(await function.CallAsync<BigInteger>());
 
         }
@@ -75,8 +71,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> epochBlockReward(uint epoch)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("calculateReward");
+            var function = _validatorsContract.GetFunction("calculateReward");
             return weiToRecent(await function.CallAsync<BigInteger>(epoch));
 
         }
@@ -88,8 +83,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> getRequiredStakingFunds(uint epoch)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("getRequiredStakingFunds");
+            var function = _validatorsContract.GetFunction("getRequiredStakingFunds");
             return weiToRecent(await function.CallAsync<BigInteger>(epoch));
         }
 
@@ -100,8 +94,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<uint> witnessRequiredBalancePercent()
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("witnessRequiredBalancePercent");
+            var function = _validatorsContract.GetFunction("witnessRequiredBalancePercent");
 
             return await function.CallAsync<uint>();
         }
@@ -113,8 +106,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<List<string>> getValidatorsByEpoch(uint epoch)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("getValidatorsByEpoch");
+            var function = _validatorsContract.GetFunction("getValidatorsByEpoch");
             return (await function.CallAsync<List<string>>(epoch));
         }
 
@@ -125,8 +117,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<List<string>> getCandidatesByEpoch(uint epoch)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("getCandidates");
+            var function = _validatorsContract.GetFunction("getCandidates");
             return (await function.CallAsync<List<string>>(epoch));
         }
 
@@ -138,8 +129,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<List<string>> getCandidateFreeServiceProviders(uint epoch, string candidate)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("getValidatorFreeServiceProviders");
+            var function = _validatorsContract.GetFunction("getValidatorFreeServiceProviders");
             return (await function.CallAsync<List<string>>(epoch, candidate));
         }
 
@@ -151,8 +141,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<List<string>> getCandidateWitnesses(uint epoch, string candidate)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("getValidatorWitnesses");
+            var function = _validatorsContract.GetFunction("getValidatorWitnesses");
             return (await function.CallAsync<List<string>>(epoch, candidate));
         }
 
@@ -166,8 +155,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> getCandidateFreeMbs(uint epoch, string candidate)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("validatorFreeMbs");
+            var function = _validatorsContract.GetFunction("validatorFreeMbs");
             return weiToRecent((await function.CallAsync<BigInteger>(epoch, candidate)));
         }
 
@@ -179,8 +167,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> getCandidateStakingFunds(uint epoch, string candidate)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("validatorStakingFunds");
+            var function = _validatorsContract.GetFunction("validatorStakingFunds");
             return weiToRecent((await function.CallAsync<BigInteger>(epoch, candidate)));
         }
 
@@ -192,8 +179,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> getCandidateTotalStakingFunds(uint epoch, string candidate)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("validatorTotalStakingFunds");
+            var function = _validatorsContract.GetFunction("validatorTotalStakingFunds");
             return weiToRecent((await function.CallAsync<BigInteger>(epoch, candidate)));
         }
 
@@ -205,8 +191,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> getCandidateFundsForWitnesses(uint epoch, string candidate)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("validatorWitnessesFunds");
+            var function = _validatorsContract.GetFunction("validatorWitnessesFunds");
             return weiToRecent((await function.CallAsync<BigInteger>(epoch, candidate)));
         }
 
@@ -218,8 +203,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<AddressStatusData> getCandidateElectedStatus(uint epoch, string candidate)
         {
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction("status");
+            var function = _validatorsContract.GetFunction("status");
             return await function.CallDeserializingToObjectAsync<AddressStatusData>(epoch, candidate);
         }
 
@@ -342,8 +326,7 @@ namespace RecentLib
         protected async Task<OutgoingTransaction> executeValidatorsMethod(string method, object[] input, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken, decimal? value = null)
         {
 
-            var contract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
-            var function = contract.GetFunction(method);
+            var function = _validatorsContract.GetFunction(method);
 
             return await executeBlockchainTransaction(_wallet.address, input, calcNetFeeOnly, function, waitReceipt, cancellationToken, recentToWei(value));
         }

@@ -57,14 +57,13 @@ namespace RecentLib
         public async Task<Relayer> getRelayer(uint epoch, uint index, bool includeBalance = false, string balanceAddress = "")
         {
 
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("relayers");
+            var function = _paymentChannelsContract.GetFunction("relayers");
             var result = await function.CallDeserializingToObjectAsync<RelayerData>(epoch, index);
             uint? lockUntilBlock = null;
             decimal? balance = null;
             if (includeBalance)
             {
-                var userBalanceFunction = contract.GetFunction("userDepositOnRelayer");
+                var userBalanceFunction = _paymentChannelsContract.GetFunction("userDepositOnRelayer");
                 var userBalance = await getUserDepositOnRelayer(string.IsNullOrEmpty(balanceAddress) ? _wallet.address : balanceAddress, result.owner);
                 lockUntilBlock = userBalance.lockUntilBlock;
                 balance = userBalance.balance;
@@ -97,8 +96,7 @@ namespace RecentLib
         /// <returns>DepositOnRelayer class</returns>
         public async Task<DepositOnRelayer> getUserDepositOnRelayer(string userAddress, string relayer)
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("userDepositOnRelayer");
+            var function = _paymentChannelsContract.GetFunction("userDepositOnRelayer");
             var result = await function.CallDeserializingToObjectAsync<DepositOnRelayerData>(userAddress, relayer);
             return new DepositOnRelayer { balance = weiToRecent(result.balance), lockUntilBlock = result.lockUntilBlock };
         }
@@ -109,8 +107,7 @@ namespace RecentLib
         /// <returns>Number of Relayers</returns>
         public async Task<uint> getCurrentRelayersEpoch()
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("getCurrentEpoch");
+            var function = _paymentChannelsContract.GetFunction("getCurrentEpoch");
             var currentEpoch = await function.CallAsync<BigInteger>();
             return (uint)currentEpoch;
         }
@@ -121,8 +118,7 @@ namespace RecentLib
         /// <returns>Block number</returns>
         public async Task<uint> getCurrentValidatorsElectionEnd()
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("getCurrentValidatorsElectionEnd");
+            var function = _paymentChannelsContract.GetFunction("getCurrentValidatorsElectionEnd");
             var currentValidatorsElectionEnd = await function.CallAsync<BigInteger>();
             return (uint)currentValidatorsElectionEnd;
         }
@@ -138,8 +134,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<uint> getEpochRelayerIndex(uint epoch, string owner)
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("epochRelayerIndex");
+            var function = _paymentChannelsContract.GetFunction("epochRelayerIndex");
             return await function.CallAsync<uint>(epoch, owner);
 
         }
@@ -153,8 +148,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<decimal> userToBeneficiaryFinalizedAmountForNonce(string signer, string beneficiary, string nonce)
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("userToBeneficiaryFinalizedAmountForNonce");
+            var function = _paymentChannelsContract.GetFunction("userToBeneficiaryFinalizedAmountForNonce");
             return weiToRecent(await function.CallAsync<BigInteger>(signer, beneficiary, nonce));
 
         }
@@ -168,8 +162,7 @@ namespace RecentLib
         /// <returns>The list of Relayers</returns>
         public async Task<List<Relayer>> getRelayers(uint? epoch, bool includeBalance = false, string balanceAddress = "")
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("relayersCounter");
+            var function = _paymentChannelsContract.GetFunction("relayersCounter");
             if (!epoch.HasValue)
             {
                 epoch = await getCurrentRelayersEpoch();
@@ -177,11 +170,14 @@ namespace RecentLib
             uint totalRelayersCount = (uint)await function.CallAsync<BigInteger>(epoch);
 
             var ret = new List<Relayer>();
-            Parallel.For(1, totalRelayersCount + 1, i =>
+            for (int i = 1; i <= totalRelayersCount; i++)
             {
-                ret.Add(getRelayer(epoch.Value, (uint)i, includeBalance, balanceAddress).Result);
-
-            });
+                ret.Add(await getRelayer(epoch.Value, (uint)i, includeBalance, balanceAddress));
+            }
+            //Parallel.For(1, totalRelayersCount + 1, async i =>
+            //{
+            //    ret.Add(await getRelayer(epoch.Value, (uint)i, includeBalance, balanceAddress));
+            //});
             return ret;
         }
 
@@ -329,8 +325,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<bool> checkOffchainSignature(SignedOffchainTransaction signedOffchainTransaction)
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("checkOffchainSignature");
+            var function = _paymentChannelsContract.GetFunction("checkOffchainSignature");
             string signer = await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.v, signedOffchainTransaction.r, signedOffchainTransaction.s, signedOffchainTransaction.nonce, signedOffchainTransaction.fee, signedOffchainTransaction.beneficiary, signedOffchainTransaction.amount);
             var addressEqualityComparer = new AddressEqualityComparer();
             return addressEqualityComparer.Equals(signer, signedOffchainTransaction.signer);
@@ -345,8 +340,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<bool> checkOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("checkOffchainRelayerSignature");
+            var function = _paymentChannelsContract.GetFunction("checkOffchainRelayerSignature");
             string signer = await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.rh, signedOffchainTransaction.rv, signedOffchainTransaction.rr, signedOffchainTransaction.rs, signedOffchainTransaction.txUntilBlock);
             var addressEqualityComparer = new AddressEqualityComparer();
             return addressEqualityComparer.Equals(signer, signedOffchainTransaction.relayerId);
@@ -359,8 +353,7 @@ namespace RecentLib
         /// <returns></returns>
         public async Task<byte[]> getFinalizeOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)
         {
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction("getFinalizeOffchainRelayerSignature");
+            var function = _paymentChannelsContract.GetFunction("getFinalizeOffchainRelayerSignature");
             return await function.CallAsync<byte[]>(signedOffchainTransaction.relayerId, signedOffchainTransaction.nonce, signedOffchainTransaction.fee, signedOffchainTransaction.beneficiary, signedOffchainTransaction.amount);
         }
 
@@ -377,8 +370,7 @@ namespace RecentLib
         protected async Task<OutgoingTransaction> executePaymentChannelsMethod(string method, object[] input, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken, decimal? value = null)
         {
 
-            var contract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            var function = contract.GetFunction(method);
+            var function = _paymentChannelsContract.GetFunction(method);
 
             return await executeBlockchainTransaction(_wallet.address, input, calcNetFeeOnly, function, waitReceipt, cancellationToken, recentToWei(value));
         }

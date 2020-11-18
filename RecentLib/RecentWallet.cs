@@ -25,15 +25,22 @@ namespace RecentLib
         
         private readonly string _nodeUrl;
 
+        private readonly Contract _paymentChannelsContract;
+        private readonly Contract _validatorsContract;
+
+
         public RecentCore()
             : this(Constants.RecentProject.NodeUrl)
-        { }
+        {
+            
+        }
 
         public RecentCore(string nodeUrl)
         {
             _nodeUrl = nodeUrl;
             _web3 = new Web3(_nodeUrl);
-
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
         }
 
         internal WalletData _wallet { get; set; }
