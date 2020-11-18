@@ -72,6 +72,14 @@ namespace UnitTest
 
 
         [TestMethod]
+        public void CreateSeedPhrase()
+        {
+            var lib = new RecentCore(NodeUrl);
+            var phrase = lib.createAndRetrieveSeedPhrase();
+
+        }
+
+        [TestMethod]
         public void Flow()
         {
             var relayerLib = new RecentCore(NodeUrl);
