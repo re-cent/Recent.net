@@ -369,7 +369,6 @@ namespace RecentLib
         /// <returns>The Tx</returns>
         protected async Task<OutgoingTransaction> executePaymentChannelsMethod(string method, object[] input, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken, decimal? value = null)
         {
-
             var function = _paymentChannelsContract.GetFunction(method);
 
             return await executeBlockchainTransaction(_wallet.address, input, calcNetFeeOnly, function, waitReceipt, cancellationToken, recentToWei(value));

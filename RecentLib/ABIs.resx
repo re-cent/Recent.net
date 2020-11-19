@@ -182,6 +182,41 @@
 		"type": "event"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "id",
+				"type": "bytes32"
+			}
+		],
+		"name": "closeChannel",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "id",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "increaseLckTimeInDays",
+				"type": "uint256"
+			}
+		],
+		"name": "depositToChannel",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -205,6 +240,166 @@
 		],
 		"name": "DepositToChannel",
 		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "relayerId",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "lockUntilBlock",
+				"type": "uint256"
+			}
+		],
+		"name": "depositToRelayer",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "h",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint8",
+				"name": "v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "s",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "channelId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "nonce",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "finalizeOffchainP2PTransaction",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "h",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint8",
+				"name": "v",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "r",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "s",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "rh",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint8",
+				"name": "rv",
+				"type": "uint8"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "rr",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "rs",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "nonce",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint256",
+				"name": "fee",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "txUntilBlock",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address payable",
+				"name": "beneficiary",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "finalizeOffchainRelayerTransaction",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "lockTimeInDays",
+				"type": "uint256"
+			}
+		],
+		"name": "openChannel",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -398,6 +593,106 @@
 		"type": "event"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "targetEpoch",
+				"type": "uint256"
+			}
+		],
+		"name": "relayerWithdrawPenaltyFunds",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "targetEpoch",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "domain",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "fee",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxUsers",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxCoins",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "maxTxThroughput",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "offchainTxDelay",
+				"type": "uint256"
+			}
+		],
+		"name": "requestRelayerLicense",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "targetEpoch",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "domain",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "fee",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "offchainTxDelay",
+				"type": "uint256"
+			}
+		],
+		"name": "updateRelayer",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -446,6 +741,26 @@
 		],
 		"name": "UserWithdraw",
 		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "relayerId",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdrawFunds",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"constant": true,
@@ -582,7 +897,7 @@
 			}
 		],
 		"payable": false,
-		"stateMutability": "pure",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -638,62 +953,7 @@
 			}
 		],
 		"payable": false,
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "id",
-				"type": "bytes32"
-			}
-		],
-		"name": "closeChannel",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "id",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "uint256",
-				"name": "increaseLckTimeInDays",
-				"type": "uint256"
-			}
-		],
-		"name": "depositToChannel",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "relayerId",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "lockUntilBlock",
-				"type": "uint256"
-			}
-		],
-		"name": "depositToRelayer",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -738,123 +998,18 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "h",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "uint8",
-				"name": "v",
-				"type": "uint8"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "r",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "s",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "channelId",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "nonce",
-				"type": "bytes32"
-			},
+		"constant": true,
+		"inputs": [],
+		"name": "freeServiceDisputeThreshold",
+		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "amount",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "finalizeOffchainP2PTransaction",
-		"outputs": [],
 		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "h",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "uint8",
-				"name": "v",
-				"type": "uint8"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "r",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "s",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "rh",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "uint8",
-				"name": "rv",
-				"type": "uint8"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "rr",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "rs",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "nonce",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "uint256",
-				"name": "fee",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "txUntilBlock",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address payable",
-				"name": "beneficiary",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "finalizeOffchainRelayerTransaction",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -987,7 +1142,7 @@
 			}
 		],
 		"payable": false,
-		"stateMutability": "pure",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -1038,21 +1193,6 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "maxReward",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
 		"name": "maximumRelayersNumber",
 		"outputs": [
 			{
@@ -1083,7 +1223,7 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "minReward",
+		"name": "maxReward",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -1096,23 +1236,18 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "recipient",
-				"type": "address"
-			},
+		"constant": true,
+		"inputs": [],
+		"name": "minReward",
+		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "lockTimeInDays",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "openChannel",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -1128,21 +1263,6 @@
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "targetEpoch",
-				"type": "uint256"
-			}
-		],
-		"name": "relayerWithdrawPenaltyFunds",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -1248,56 +1368,6 @@
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "targetEpoch",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "domain",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "fee",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxUsers",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxCoins",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "maxTxThroughput",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "offchainTxDelay",
-				"type": "uint256"
-			}
-		],
-		"name": "requestRelayerLicense",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
@@ -1330,42 +1400,7 @@
 			}
 		],
 		"payable": false,
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "targetEpoch",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "domain",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "fee",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "offchainTxDelay",
-				"type": "uint256"
-			}
-		],
-		"name": "updateRelayer",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -1413,6 +1448,11 @@
 				"type": "address"
 			},
 			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			},
+			{
 				"internalType": "bytes32",
 				"name": "",
 				"type": "bytes32"
@@ -1428,26 +1468,6 @@
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "relayerId",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawFunds",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

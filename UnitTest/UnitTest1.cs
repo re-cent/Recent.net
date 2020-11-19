@@ -313,13 +313,13 @@ namespace UnitTest
         public void updateRelayer()
         {
             var lib = new RecentCore(NodeUrl);
-            //var wallet = lib.importWalletFromSeedPhrase("combine close before lawsuit asthma glimpse yard debate mixture stool adjust ride");
-            var wallet = lib.importWalletFromPK("0x3652ba47bffa5666990c47f7e249cf0dc8d4c61b6bb0d64e67e15f8d88f5c834");
+            var relayerWallet = lib.importWalletFromPK("E5ADE4B50BA041A9C77DBA91401BEA949393F2C24433B0338702E7AE06443089");
             var currentEpoch = lib.getCurrentRelayersEpoch().Result;
-            var relayer = lib.getRelayer(currentEpoch, wallet.address).Result;
-            var tx = lib.updateRelayer(currentEpoch, "http://192.168.0.36:5001", relayer.name, relayer.fee, relayer.offchainTxDelay, false, true, null).Result;
-            relayer = lib.getRelayer(currentEpoch, wallet.address).Result;
-            Assert.AreEqual(relayer.domain, "http://192.168.0.36:5001");
+            var relayer = lib.getRelayer(currentEpoch, relayerWallet.address).Result;
+            var tx2 = lib.transfer(0.01m, "0x16A472DAE0dD16A0140aB26A2F92B426a5b21386", null, false, true, null).Result;
+            var tx = lib.updateRelayer(currentEpoch, "http://192.168.1.15", relayer.name, relayer.fee, relayer.offchainTxDelay, false, false, null).Result;
+            relayer = lib.getRelayer(currentEpoch, relayerWallet.address).Result;
+            Assert.AreEqual(relayer.domain, "http://192.168.1.15");
 
         }
 

@@ -25,9 +25,10 @@ namespace RecentLib
         
         private readonly string _nodeUrl;
 
-        private readonly Contract _paymentChannelsContract;
-        private readonly Contract _validatorsContract;
+        private Contract _paymentChannelsContract;
+        private Contract _validatorsContract;
 
+        private BigInteger _chainId = new BigInteger(12858955);
 
         public RecentCore()
             : this(Constants.RecentProject.NodeUrl)
@@ -39,8 +40,7 @@ namespace RecentLib
         {
             _nodeUrl = nodeUrl;
             _web3 = new Web3(_nodeUrl);
-            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
-            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
+
         }
 
         internal WalletData _wallet { get; set; }
@@ -69,7 +69,7 @@ namespace RecentLib
 
             if (!calcNetFeeOnly)
             {
-                var txInput = new TransactionInput("", function.ContractAddress, sourceAddress, gas, new HexBigInteger(gasPrice), value);
+                var txInput = new TransactionInput("", function.ContractAddress.EnsureHexPrefix(), sourceAddress.EnsureHexPrefix(), gas, new HexBigInteger(gasPrice), value);
 
                 if (waitReceipt)
                 {
@@ -145,7 +145,9 @@ namespace RecentLib
 
             var address = EthECKey.GetPublicAddress(key.GetPrivateKey());
             _wallet = new WalletData { address = address, PK = key.GetPrivateKey() };
-            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), _nodeUrl);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK,_chainId), _nodeUrl);
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
             return _wallet;
         }
 
@@ -159,7 +161,9 @@ namespace RecentLib
 
             var address = EthECKey.GetPublicAddress(PK);
             _wallet = new WalletData { address = address, PK = PK };
-            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), _nodeUrl);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK, _chainId), _nodeUrl);
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
             return _wallet;
 
         }
@@ -172,8 +176,11 @@ namespace RecentLib
         {
             Wallet wallet = new Wallet(Wordlist.English, WordCount.Twelve);
             var account = wallet.GetAccount(0);
+            
             _wallet = new WalletData { address = account.Address, PK = account.PrivateKey };
-            _web3 = new Web3(account, _nodeUrl);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK, _chainId), _nodeUrl);
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
             return string.Join(" ", wallet.Words);
         }
 
@@ -189,7 +196,9 @@ namespace RecentLib
             Wallet wallet = new Wallet(seedPhrase, null);
             var account = wallet.GetAccount(0);
             _wallet = new WalletData { address = account.Address, PK = account.PrivateKey };
-            _web3 = new Web3(account, _nodeUrl);
+            _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK, _chainId), _nodeUrl);
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
             return new WalletData { address = account.Address, PK = account.PrivateKey };
         }
 
