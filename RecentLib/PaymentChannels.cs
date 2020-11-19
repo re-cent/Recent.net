@@ -146,10 +146,11 @@ namespace RecentLib
         /// <param name="beneficiary">User2 (beneficiary)</param>
         /// <param name="nonce">The unique P2P transaction id</param>
         /// <returns></returns>
-        public async Task<decimal> userToBeneficiaryFinalizedAmountForNonce(string signer, string beneficiary, string nonce)
+        public async Task<decimal> userToBeneficiaryFinalizedAmountForNonce(string signer, string beneficiary, string relayer, string nonce)
         {
             var function = _paymentChannelsContract.GetFunction("userToBeneficiaryFinalizedAmountForNonce");
-            return weiToRecent(await function.CallAsync<BigInteger>(signer, beneficiary, nonce));
+            var currentAmount = await function.CallAsync<BigInteger>(signer, beneficiary, relayer, nonce);
+            return weiToRecent(currentAmount);
 
         }
 
