@@ -172,14 +172,14 @@ namespace UnitTest
                 var beneficiaryBalanceBefore = userLib.getBalance(beneficiaryAddress).Result;
                 var userBalanceOnRelayerBefore = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
                 var relayerBalanceBefore = userLib.getBalance(relayer.owner).Result;
-                var signerBeneficiaryRelationForNonceBefore = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, nonce).Result;
+                var signerBeneficiaryRelationForNonceBefore = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, relayer.owner, nonce).Result;
 
 
 
                 var txOutput = serviceProviderLib.finalizeOffchainRelayerTransaction(signedFromRelayerTx, false, true, null).Result;
 
 
-                var signerBeneficiaryRelationForNonceAfter = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, nonce).Result;
+                var signerBeneficiaryRelationForNonceAfter = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, relayer.owner, nonce).Result;
                 var beneficiaryBalanceAfter = userLib.getBalance(beneficiaryAddress).Result;
                 var userBalanceOnRelayerAfter = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
                 var relayerBalanceAfter = userLib.getBalance(relayer.owner).Result;
@@ -215,14 +215,14 @@ namespace UnitTest
             var beneficiaryBalanceBeforePenaltyFunded = userLib.getBalance(beneficiaryAddress).Result;
             var userBalanceOnRelayerBeforePenaltyFunded = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
             var relayerBalanceBeforePenaltyFunded = userLib.getBalance(relayer.owner).Result;
-            var signerBeneficiaryRelationForNonceBeforePenaltyFunded = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, nonce).Result;
+            var signerBeneficiaryRelationForNonceBeforePenaltyFunded = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, relayer.owner, nonce).Result;
 
             var relayerPenaltyFundsBefore = relayerLib.getRelayer(relayer.owner).Result.remainingPenaltyFunds;
 
             var txOutputPenaltyFunded = serviceProviderLib.finalizeOffchainRelayerTransaction(signedFromRelayerTxPenaltyFunded, false, true, null).Result;
 
 
-            var signerBeneficiaryRelationForNonceAfterPenaltyFunded = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, nonce).Result;
+            var signerBeneficiaryRelationForNonceAfterPenaltyFunded = userLib.userToBeneficiaryFinalizedAmountForNonce(userWallet.address, beneficiaryAddress, relayer.owner, nonce).Result;
             var beneficiaryBalanceAfterPenaltyFunded = userLib.getBalance(beneficiaryAddress).Result;
             var userBalanceOnRelayerAfterPenaltyFunded = userLib.getUserDepositOnRelayer(userWallet.address, relayer.owner).Result;
             var relayerBalanceAfterPenaltyFunded = userLib.getBalance(relayer.owner).Result;

@@ -246,6 +246,18 @@ namespace RecentLib
         }
 
         /// <summary>
+        /// Compare 2 addresses
+        /// </summary>
+        /// <param name="address1">1st address</param>
+        /// <param name="address2">2nd address</param>
+        /// <returns>true/false</returns>
+        public bool addressEquals(string address1, string address2)
+        {
+            var addressEqualityComparer = new AddressEqualityComparer();
+            return addressEqualityComparer.Equals(address1, address2);
+        }
+
+        /// <summary>
         /// Get gas price to be used on transactions in GWei
         /// </summary>
         /// <returns></returns>
