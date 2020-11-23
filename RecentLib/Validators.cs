@@ -100,6 +100,16 @@ namespace RecentLib
         }
 
         /// <summary>
+        /// Return the block number that current election period ends
+        /// </summary>
+        /// <returns>Block number</returns>
+        public async Task<uint> getCurrentValidatorsElectionEnd()
+        {
+            var function = _paymentChannelsContract.GetFunction("getCurrentValidatorsElectionEnd");
+            return (uint)await function.CallAsync<BigInteger>();
+        }
+
+        /// <summary>
         /// List of Validators for an Epoch
         /// </summary>
         /// <param name="epoch">Epoch</param>

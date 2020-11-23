@@ -116,11 +116,10 @@ namespace RecentLib
         /// Return the block number that current election period ends
         /// </summary>
         /// <returns>Block number</returns>
-        public async Task<uint> getCurrentValidatorsElectionEnd()
+        public async Task<uint> getCurrentRelayersElectionEnd()
         {
-            var function = _paymentChannelsContract.GetFunction("getCurrentValidatorsElectionEnd");
-            var currentValidatorsElectionEnd = await function.CallAsync<BigInteger>();
-            return (uint)currentValidatorsElectionEnd;
+            var function = _paymentChannelsContract.GetFunction("getCurrentRelayersElectionEnd");
+            return (uint)await function.CallAsync<BigInteger>();
         }
 
 
