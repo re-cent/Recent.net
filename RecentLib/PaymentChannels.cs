@@ -334,6 +334,17 @@ namespace RecentLib
 
 
         /// <summary>
+        /// Get Signer of Offchain Payment payload
+        /// </summary>
+        /// <param name="signedOffchainTransaction"></param>
+        /// <returns></returns>
+        public async Task<string> getOffchainSignatureSigner(SignedOffchainTransaction signedOffchainTransaction)
+        {
+            var function = _paymentChannelsContract.GetFunction("checkOffchainSignature");
+            return await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.v, signedOffchainTransaction.r, signedOffchainTransaction.s, signedOffchainTransaction.nonce, signedOffchainTransaction.fee, signedOffchainTransaction.beneficiary, signedOffchainTransaction.amount);
+        }
+
+        /// <summary>
         /// Check the validity of an Offchain Payment payload signed by a Relayer
         /// </summary>
         /// <param name="signedOffchainTransaction"></param>
@@ -344,6 +355,17 @@ namespace RecentLib
             string signer = await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.rh, signedOffchainTransaction.rv, signedOffchainTransaction.rr, signedOffchainTransaction.rs, signedOffchainTransaction.txUntilBlock);
             var addressEqualityComparer = new AddressEqualityComparer();
             return addressEqualityComparer.Equals(signer, signedOffchainTransaction.relayerId);
+        }
+
+        /// <summary>
+        /// Get Relayer of Offchain Payment payload
+        /// </summary>
+        /// <param name="signedOffchainTransaction"></param>
+        /// <returns></returns>
+        public async Task<string> getOffchainRelayerSignature(SignedOffchainTransaction signedOffchainTransaction)
+        {
+            var function = _paymentChannelsContract.GetFunction("checkOffchainRelayerSignature");
+            return await function.CallAsync<string>(signedOffchainTransaction.h, signedOffchainTransaction.rh, signedOffchainTransaction.rv, signedOffchainTransaction.rr, signedOffchainTransaction.rs, signedOffchainTransaction.txUntilBlock);
         }
 
         /// <summary>
