@@ -274,6 +274,13 @@ namespace RecentLib
             offchainTransaction.v = signature.V.FirstOrDefault();
             offchainTransaction.r = signature.R;
             offchainTransaction.s = signature.S;
+            if (offchainTransaction.s.Length < 32)
+            {
+                var tmpS = offchainTransaction.s.ToList();
+                tmpS.Insert(0, 0);
+                offchainTransaction.s = tmpS.ToArray();
+            }
+
             offchainTransaction.signer = _wallet.address;
             return offchainTransaction;
         }
