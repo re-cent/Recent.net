@@ -30,6 +30,8 @@ namespace RecentLib
 
         private BigInteger _chainId = new BigInteger(12858955);
 
+        private BigInteger? _gasPrice;
+
         public RecentCore()
             : this(Constants.RecentProject.NodeUrl)
         {
@@ -40,12 +42,36 @@ namespace RecentLib
         {
             _nodeUrl = nodeUrl;
             _web3 = new Web3(_nodeUrl);
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
 
         }
 
         internal WalletData _wallet { get; set; }
         internal Web3 _web3 { get; set; }
 
+
+        /// <summary>
+        /// Lock wallet
+        /// </summary>
+        public void lockWallet()
+        {
+            _web3 = new Web3(_nodeUrl);
+            _wallet = null;
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
+        }
+
+
+        public void setGasPrice(uint gasPrice)
+        {
+            _gasPrice = new BigInteger(gasPrice);
+        }
+
+        public void setGasPrice(BigInteger gasPrice)
+        {
+            _gasPrice = gasPrice;
+        }
 
         /// <summary>
         /// Generic method that invoke a Smart contract method
@@ -64,7 +90,7 @@ namespace RecentLib
             var gas = await function.EstimateGasAsync(sourceAddress, null, value, input);
 
             //Get Gas price for Tx
-            var gasPrice = getGasPrice();
+            var gasPrice = _gasPrice.HasValue ? _gasPrice.Value : getGasPrice();
             var txId = "";
 
             if (!calcNetFeeOnly)
@@ -103,6 +129,8 @@ namespace RecentLib
             var ecKey = EthECKey.GenerateKey();
             _wallet = new WalletData { address = ecKey.GetPublicAddress(), PK = ecKey.GetPrivateKey() };
             _web3 = new Web3(new Nethereum.Web3.Accounts.Account(_wallet.PK), _nodeUrl);
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
             return _wallet;
 
         }
@@ -290,7 +318,7 @@ namespace RecentLib
         /// Get Recent Network current gas price
         /// </summary>
         /// <returns></returns>
-        public async Task<decimal> getGasPriceAsDecimal()
+        public async Task<decimal> getGasPriceFromBlockchainAsDecimal()
         {
             return Web3.Convert.FromWei((await _web3.Eth.GasPrice.SendRequestAsync()).Value, EthUnit.Gwei);
         }
@@ -370,14 +398,11 @@ namespace RecentLib
         /// <param name="waitReceipt">Wait the Tx to be mined</param>
         /// <param name="calcNetFeeOnly">When true calculates the network fee cost, else broadcast transaction to the network</param>
         /// <returns></returns>
-        public async Task<OutgoingTransaction> transfer(decimal amount, string destinationAddress, BigInteger? gasPrice, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> transfer(decimal amount, string destinationAddress, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
 
             BigInteger gas = new BigInteger(21000);
-            if (!gasPrice.HasValue)
-            {
-                gasPrice = getGasPrice();
-            }
+            var gasPrice = _gasPrice.HasValue ? _gasPrice : getGasPrice();
 
             decimal networkFee = weiToRecent(gasPrice.Value * gas);
 
