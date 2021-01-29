@@ -28,6 +28,8 @@ namespace RecentLib
         {
 
             ValidatorsContract = ensureValidAddress(address);
+
+            _validatorsContract = _web3.Eth.GetContract(ValidatorsABI, ValidatorsContract);
         }
 
         /// <summary>

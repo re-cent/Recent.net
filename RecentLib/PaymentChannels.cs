@@ -26,6 +26,8 @@ namespace RecentLib
         {
 
             PaymentChannelsContract = ensureValidAddress(address);
+
+            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
         }
 
         /// <summary>
