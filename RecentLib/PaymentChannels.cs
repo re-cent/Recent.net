@@ -20,14 +20,13 @@ namespace RecentLib
     {
 
 
-        private string PaymentChannelsContract = "0x6875E6846fa34057019e0f9BFb0CEad0F0D5742A";
+        private string _paymentChannelsContractAddress = "0x6875E6846fa34057019e0f9BFb0CEad0F0D5742A";
 
-        public void updateRelaysSmartContract(string address)
+        public void updateRelayersSmartContract(string address)
         {
 
-            PaymentChannelsContract = ensureValidAddress(address);
+            _paymentChannelsContractAddress = ensureValidAddress(address);
 
-            _paymentChannelsContract = _web3.Eth.GetContract(PaymentChannelsABI, PaymentChannelsContract);
         }
 
         /// <summary>
