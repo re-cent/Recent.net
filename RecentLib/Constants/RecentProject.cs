@@ -13,10 +13,7 @@ namespace RecentLib.Constants
 
         //public static string PaymentChannelsContract = "0x9d5f44d379B0f0bD9b37988690D6DaFE2572659E";
 
-        public static string PaymentChannelsContract = "0x6875E6846fa34057019e0f9BFb0CEad0F0D5742A";
 
-        public static string ValidatorsContract = "0xEdBDCC6429Ee17A4CBB04D247c3FDa842b5a2dA4";
-        public static string BlockRewardContract= "0xEdBDCC6429Ee17A4CBB04D247c3FDa842b5a2dA4";
 
         public static string UserProfileABI = ABIs.ProfileABI;
         public static string PaymentChannelsABI = ABIs.PaymentChannelsABI;

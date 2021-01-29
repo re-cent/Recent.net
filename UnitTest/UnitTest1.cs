@@ -46,12 +46,12 @@ namespace UnitTest
             var lib = new RecentCore(Node2Url);
             var wallet = lib.importWalletFromPK("E5ADE4B50BA041A9C77DBA91401BEA949393F2C24433B0338702E7AE06443089");
             var balance = lib.getBalance().Result;
-            var txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
+            var txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", false, true, null).Result;
 
 
             wallet = lib.importWalletFromPK("B68811986F995A45C66CF30D7C9A015268A1BB2E4697D6DBB23D7B96FC3607B0");
             balance = lib.getBalance().Result;
-            txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", null, false, true, null).Result;
+            txid = lib.transfer(0.01m, "0x3d176d013550b48974c1d2f0b18c6df1ff71391e", false, true, null).Result;
         }
 
         [TestMethod]
@@ -116,7 +116,7 @@ namespace UnitTest
             var userBalance = userLib.getBalance().Result;
             if (userBalance == 0)
             {
-                var tx = userLib.transfer(0.01m, userWallet.address, null, false, true, null).Result;
+                var tx = userLib.transfer(0.01m, userWallet.address, false, true, null).Result;
                 Assert.AreEqual(userLib.getBalance().Result, 0.01m);
             }
             var currentBlock = userLib.getLastBlock().Result;
@@ -259,7 +259,7 @@ namespace UnitTest
                     var validator2Wallet = validator2Lib.importWalletFromPK("E5ADE4B50BA041A9C77DBA91401BEA949393F2C24433B0338702E7AE06443089");
                     var validato2Balance = validator2Lib.getBalance().Result;
 
-                    var txTransfer = validator2Lib.transfer(totalRequiedFunds - currentBalance + 1m, wallet.address, null, false, true, null).Result;
+                    var txTransfer = validator2Lib.transfer(totalRequiedFunds - currentBalance + 1m, wallet.address, false, true, null).Result;
 
 
                 }
@@ -405,21 +405,7 @@ namespace UnitTest
 
         }
 
-        [TestMethod]
-        public void gasPrice()
-        {
 
-            var lib1 = new RecentCore(NodeUrl);
-            var lib2 = new RecentCore(Node2Url);
-
-            var gasPrice1 = lib1.getGasPriceAsDecimal().Result;
-            var gasPrice2 = lib2.getGasPriceAsDecimal().Result;
-
-            var gasPrice = lib1.getGasPriceForTransaction();
-            gasPrice = lib1.setGasPriceForTransaction(1.5m);
-            updateRelayer();
-
-        }
 
 
     }

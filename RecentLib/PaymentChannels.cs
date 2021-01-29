@@ -19,6 +19,15 @@ namespace RecentLib
     public partial class RecentCore
     {
 
+
+        private string PaymentChannelsContract = "0x6875E6846fa34057019e0f9BFb0CEad0F0D5742A";
+
+        public void updateRelaysSmartContract(string address)
+        {
+
+            PaymentChannelsContract = ensureValidAddress(address);
+        }
+
         /// <summary>
         /// Get Relayer info for current Epoch
         /// </summary>
@@ -44,6 +53,8 @@ namespace RecentLib
 
             return await getRelayer(epoch, await getEpochRelayerIndex(epoch, owner), includeBalance, balanceAddress);
         }
+
+
 
 
 
@@ -291,10 +302,10 @@ namespace RecentLib
             offchainTransaction.v = signature.V.FirstOrDefault();
             offchainTransaction.r = signature.R;
             offchainTransaction.s = signature.S;
-            if (offchainTransaction.s.Length<32)
+            if (offchainTransaction.s.Length < 32)
             {
                 var tmpS = offchainTransaction.s.ToList();
-                tmpS.Insert(0,0);
+                tmpS.Insert(0, 0);
                 offchainTransaction.s = tmpS.ToArray();
             }
             offchainTransaction.signer = _wallet.address;

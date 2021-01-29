@@ -32,6 +32,13 @@ namespace RecentLib
 
         private BigInteger? _gasPrice;
 
+
+
+
+
+
+        //private string BlockRewardContract = "0xEdBDCC6429Ee17A4CBB04D247c3FDa842b5a2dA4";
+
         public RecentCore()
             : this(Constants.RecentProject.NodeUrl)
         {
