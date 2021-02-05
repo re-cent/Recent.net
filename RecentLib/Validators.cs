@@ -1,4 +1,5 @@
 ﻿using Nethereum.ABI;
+using Nethereum.Hex.HexTypes;
 using Nethereum.Signer;
 using Nethereum.Util;
 using RecentLib.Models;
@@ -96,6 +97,17 @@ namespace RecentLib
         {
             var function = _validatorsContract.GetFunction("getRequiredStakingFunds");
             return weiToRecent(await function.CallAsync<BigInteger>(epoch));
+        }
+
+        /// <summary>
+        /// Get required staking funds for a Validator as BN
+        /// </summary>
+        /// <param name="epoch">Target Epoch</param>
+        /// <returns></returns>
+        public async Task<BigInteger> getRequiredStakingFundsAsBN(uint epoch)
+        {
+            var function = _validatorsContract.GetFunction("getRequiredStakingFunds");
+            return await function.CallAsync<BigInteger>(epoch);
         }
 
 
@@ -305,10 +317,10 @@ namespace RecentLib
         /// <param name="waitReceipt"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<OutgoingTransaction> validatorAsCandidate(decimal stakingFunds, decimal witnessesFunds, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
+        public async Task<OutgoingTransaction> validatorAsCandidate(BigInteger stakingFunds, BigInteger witnessesFunds, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken)
         {
 
-            return await executeValidatorsMethod("validatorAsCandidate", new object[] { recentToWei(stakingFunds), recentToWei(witnessesFunds) }, calcNetFeeOnly, waitReceipt, cancellationToken, stakingFunds + witnessesFunds);
+            return await executeValidatorsMethod("validatorAsCandidate", new object[] { stakingFunds, witnessesFunds }, calcNetFeeOnly, waitReceipt, cancellationToken, stakingFunds + witnessesFunds);
         }
 
         /// <summary>
@@ -357,6 +369,24 @@ namespace RecentLib
             var function = _validatorsContract.GetFunction(method);
 
             return await executeBlockchainTransaction(_wallet.address, input, calcNetFeeOnly, function, waitReceipt, cancellationToken, recentToWei(value));
+        }
+
+        /// <summary>
+        /// Generic method that invokes VSC methods
+        /// </summary>
+        /// <param name="method">The Smart contract method</param>
+        /// <param name="input">THe input arguments</param>
+        /// <param name="calcNetFeeOnly">Calculate network fees and return. Don't place Tx Onchain</param>
+        /// <param name="waitReceipt">Wait for the Tx to be mined</param>
+        /// <param name="cancellationToken"></param>
+        /// <param name="value">When Tx is payable the amount to be transfered to Smart Contract</param>
+        /// <returns>The Tx</returns>
+        protected async Task<OutgoingTransaction> executeValidatorsMethod(string method, object[] input, bool calcNetFeeOnly, bool waitReceipt, CancellationTokenSource cancellationToken, BigInteger value)
+        {
+
+            var function = _validatorsContract.GetFunction(method);
+
+            return await executeBlockchainTransaction(_wallet.address, input, calcNetFeeOnly, function, waitReceipt, cancellationToken, new HexBigInteger(value));
         }
 
     }

@@ -281,6 +281,8 @@ namespace RecentLib
             return Web3.Convert.FromWei(wei, Nethereum.Util.UnitConversion.EthUnit.Ether);
         }
 
+
+
         /// <summary>
         /// Compare 2 addresses
         /// </summary>
