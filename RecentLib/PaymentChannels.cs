@@ -20,7 +20,7 @@ namespace RecentLib
     {
 
 
-        private string _paymentChannelsContractAddress = "0x6875E6846fa34057019e0f9BFb0CEad0F0D5742A";
+        private string _paymentChannelsContractAddress = "0xA91e33aD760407bB9582287D99Ef13B6a528aCa3";
 
         public void updateRelayersSmartContract(string address)
         {
